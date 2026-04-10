@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microbiology and Parasitology Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Khmer', 'Open Sans', sans-serif;
+        }
+        .quiz-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .option-btn {
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            line-height: 1.6;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .selected {
+            background-color: #e0e7ff !important;
+            border-color: #6366f1 !important;
+            color: #3730a3;
+        }
+        .correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        .question-nav-btn {
+            transition: all 0.2s ease-in-out;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        .question-nav-btn.active {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        .question-nav-btn.answered-correct {
+            background-color: #bfdbfe;
+            border-color: #60a5fa;
+            color: #1e40af;
+        }
+        .question-nav-btn.answered-incorrect {
+            background-color: #fecaca;
+            border-color: #f87171;
+            color: #991b1b;
+        }
+        .question-nav-btn:hover:not(.active) {
+            background-color: #f3f4f6;
+        }
+        .edit-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+        .edit-label {
+            font-weight: 500;
+            color: #374151;
+            margin-top: 12px;
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen py-8">
+
+    <div id="quiz-container" class="quiz-container w-full">
+        
+        <div class="text-center mb-8 relative">
+            <h1 class="text-3xl font-bold text-gray-800">Microbiology and Parasitology</h1>
+            <p id="quiz-subtitle" class="text-gray-500 mt-2">Subject: QCM Proposed for Exam</p>
+            <div class="absolute top-0 left-0 flex gap-2">
+                <button id="practice-sheet-btn" class="bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-lg hover:bg-blue-200 text-sm">Practice Sheet</button>
+                <button id="show-all-btn" class="bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-green-200 text-sm">Show Answers</button>
+            </div>
+            <button id="edit-quiz-btn" class="absolute top-0 right-0 bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 text-sm">Edit Quiz</button>
+        </div>
+
+        <div class="text-center mb-6">
+            <div class="inline-flex rounded-md shadow-sm flex-wrap justify-center" role="group">
+                <button id="part1-btn" type="button" class="py-2 px-4 text-sm font-medium text-white bg-indigo-600 rounded-l-lg border border-gray-200 hover:bg-indigo-700 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 1</button>
+                <button id="part2-btn" type="button" class="py-2 px-4 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 2</button>
+                <button id="part3-btn" type="button" class="py-2 px-4 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 3</button>
+                <button id="part4-btn" type="button" class="py-2 px-4 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 4</button>
+                <button id="part5-btn" type="button" class="py-2 px-4 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 5</button>
+                <button id="part6-btn" type="button" class="py-2 px-4 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 6</button>
+                <button id="part7-btn" type="button" class="py-2 px-4 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 7</button>
+                <button id="part8-btn" type="button" class="py-2 px-4 text-sm font-medium text-gray-900 bg-white border-t border-b border-r rounded-r-lg border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-indigo-500">Part 8</button>
+            </div>
+        </div>
+
+        <div id="quiz-view">
+            <div class="flex justify-between items-center mb-4">
+                 <div id="main-score-text" class="text-lg font-bold text-indigo-600"></div>
+                 <button id="redo-part-btn" class="bg-orange-100 text-orange-700 font-semibold py-2 px-4 rounded-lg hover:bg-orange-200 text-sm">Redo Part</button>
+            </div>
+            <div id="question-navigation" class="flex flex-wrap justify-center gap-2 mb-6"></div>
+
+            <div id="question-area" class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="question-number" class="text-xl font-semibold text-gray-700"></h2>
+                </div>
+                <div id="question-text" class="text-lg text-gray-800 leading-relaxed font-medium"></div>
+            </div>
+
+            <div id="answer-area"></div>
+            <div id="feedback-area" class="mt-6 text-center text-lg font-medium"></div>
+
+            <div class="mt-6 text-center">
+                <button id="redo-btn" class="hidden bg-yellow-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-yellow-600 transition-colors duration-300 shadow-lg">
+                    Redo Question
+                </button>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+                <button id="prev-btn" class="bg-gray-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-colors duration-300 shadow-lg hidden">
+                    <span class="font-semibold">&larr; Previous</span>
+                </button>
+                <button id="next-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-lg hidden ml-auto">
+                    <span class="font-semibold">Next Question</span>
+                </button>
+            </div>
+
+            <div id="results-area" class="hidden text-center">
+                <div class="mb-4">
+                    <h2 class="text-4xl font-extrabold text-gray-800">Quiz Complete!</h2>
+                </div>
+                <p id="results-score" class="text-2xl text-gray-600 mb-6"></p>
+                <div id="summary" class="text-left mt-8 bg-gray-50 p-6 rounded-lg">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-gray-700">Review Your Answers:</h3>
+                    </div>
+                </div>
+                <button id="restart-btn" class="mt-8 bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-lg">
+                    <span class="font-semibold">Play Again</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="practice-sheet-view" class="hidden"></div>
+        <div id="all-questions-view" class="hidden"></div>
+
+        <div id="edit-view" class="hidden">
+            <h2 class="text-2xl font-bold text-center mb-6">Edit Quiz Questions</h2>
+            <div id="edit-question-navigation" class="flex flex-wrap justify-center gap-2 mb-6"></div>
+            <div id="edit-questions-container"></div>
+            <div class="flex justify-between items-start mt-8">
+                <button id="add-question-btn" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">Add Question</button>
+                <div>
+                    <button id="cancel-edit-btn" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 mr-4">Cancel</button>
+                    <button id="apply-preview-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700">Apply to Preview</button>
+                    <button id="generate-save-code-btn" class="bg-purple-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-purple-700 ml-4">Generate Save Code</button>
+                </div>
+            </div>
+            <div id="export-area" class="hidden mt-6 p-4 border-2 border-dashed border-purple-400 rounded-lg bg-purple-50">
+                <h3 class="text-lg font-semibold text-purple-800">How to Save Your Changes Permanently</h3>
+                <ol class="list-decimal list-inside text-gray-700 space-y-2 mt-2">
+                    <li>All the code for your updated quiz is in the text box below.</li>
+                    <li>Click anywhere in the box to automatically copy all the code.</li>
+                    <li>Paste the copied code in a new message and send it to me.</li>
+                    <li>I will then update the file for you with your permanent changes.</li>
+                </ol>
+                <textarea id="export-output" readonly class="w-full h-64 p-2 border rounded-md bg-gray-100 font-mono text-sm focus:ring-2 focus:ring-indigo-500 mt-4 cursor-pointer"></textarea>
+                <p id="copy-feedback" class="text-purple-700 font-medium text-sm mt-2 h-4"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        let quizDataPart1 = [
+            { number: 1, type: "mcq", question: { en: "1)- Ascariasis: Question 1: The increasing prevalence of ascariasis are in :" }, options: { en: ["A)-Rainy season", "B)-Under developed countries", "C)-Tropical and subtropical countries", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 2, type: "mcq", question: { en: "Question 2: Hote definitif of ascariasis include:" }, options: { en: ["A)- Human.", "B)- Animal", "C)-Fish", "D)- Water", "E)- Others"] }, answer: { en: ["A)- Human."] } },
+            { number: 3, type: "mcq", question: { en: "Question 3: Morphology of fertilized egg of ascariasis include:" }, options: { en: ["A)-Measure between 85-95X43-47mm", "B)-Thin shelled", "C)-Mammillated.", "D)-Elongated and larger than fertilized egg", "E)-Others"] }, answer: { en: ["C)-Mammillated."] } },
+            { number: 4, type: "mcq", question: { en: "Question 4: Morphology of fertilized egg of ascariasis include:" }, options: { en: ["A)- Elongated and smaller than fertilized egg", "B)- Measure between 85-95X43-47mm", "C)- Thin shelled", "D)-B+C.", "E)-A+B+C"] }, answer: { en: ["D)-B+C."] } },
+            { number: 5, type: "mcq", question: { en: "Question 5: Characteristics the eggs of ascariasis include:" }, options: { en: ["A)-Eggs cannot embryonate in solutions of formalin, H2So4 and HCL.", "B)-Eggs are resistant to usual methods of chemical water purification, removed by Filtration and killed by boiling.", "C)-Eggs embryonate but do not hatch until ingested by man", "D)-A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 6, type: "mcq", question: { en: "Question 6: Morphology adult worm of ascariasis include:" }, options: { en: ["A)- 3 large rounded lip.", "B)- Length 15-35cm", "C)- Female is smaller than male.", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 7, type: "mcq", question: { en: "Question 7: Causes of ascariasis include:" }, options: { en: ["A)- Human feces are used for fertilizer", "B)- Unwashed fruits or vegetables", "C)- From person to person", "D)- Contact with soil mixed with human feces that contain ascariasis eggs or infected water", "E)- A+B+C+D."] }, answer: { en: ["E)- A+B+C+D."] } },
+            { number: 8, type: "mcq", question: { en: "Question 8: Risk factors of ascariasis include:" }, options: { en: ["A)- Use of human feces for fertilizer", "B)- Living in or visiting a warm climate", "C)- Lack of sanitation infrastructure", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 9, type: "mcq", question: { en: "Question 9: Mode of transmission of ascariasis by:" }, options: { en: ["A)- Intermediate host ( Animal)", "B)- Definitive host ( Human and Pig)", "C)- Ingestion of water or food contaminated with A. lumbricoides eggs.", "D)-A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 10, type: "mcq", question: { en: "Question 10: Incubation period of ascariasis include:" }, options: { en: ["A)- Average: 2 days", "B)- Average:2 weeks", "C)- Average:2 months.", "D)- Average:2 years", "E)-Others"] }, answer: { en: ["C)- Average:2 months."] } },
+            { number: 11, type: "mcq", question: { en: "Question 11: Symptoms of ascariasis include:" }, options: { en: ["A)- Fever", "B)-Breathing difficulty", "C)-Urticaria", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 12, type: "mcq", question: { en: "Question 12: Symptoms of ascariasis with adult parasite in the intestine include:" }, options: { en: ["A)- Heavy worms load can’t affect retard physical and mental development", "B)-Abdominal discomfort ( Nausea)", "C)-Asymptomatic (85%)", "D)- A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 13, type: "mcq", question: { en: "Question 13: Symptoms of ascariasis with worm migration include:" }, options: { en: ["A)-Peritonitis ,Appendicitis", "B)-Severe inflammatory reaction", "C)-Dermatological and allergic reactions can’t occur.", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 14, type: "mcq", question: { en: "Question 14: Laboratory diagnosis of ascariasis by:" }, options: { en: ["A)-Stool microscopy", "B)-Microscopic identification", "C)-Eosinophilia", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 15, type: "mcq", question: { en: "Question 15: Differential diagnosis of ascariasis include:" }, options: { en: ["A)- Salmonella infection", "B)- Appendicitis", "C)- Acute Cholangitis", "D)- Small-Bowel Obstruction", "E)- A+B+C+D."] }, answer: { en: ["E)- A+B+C+D."] } },
+            { number: 16, type: "mcq", question: { en: "Question 16: Treatment of ascariasis include:" }, options: { en: ["A)-Pyrantel pamoate.", "B)- Ampicilline", "C)-Rifampicine", "D)-Cephalosporine", "E)-A+B+C+D"] }, answer: { en: ["A)-Pyrantel pamoate."] } },
+            { number: 17, type: "mcq", question: { en: "Question 17: Complications of ascariasis include:" }, options: { en: ["A)- Pancreatitis.", "B)- Digestive perforation", "C)- liver abscess", "D)-Lung cancer", "E)-A+B+C+D"] }, answer: { en: ["A)- Pancreatitis."] } },
+            { number: 18, type: "mcq", question: { en: "Question 18: Prevention of ascariasis include:" }, options: { en: ["A)-Wash hands with soap and water before handling food", "B)-Good hygiene", "C)-Dispose of diapers properly.", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 19, type: "mcq", question: { en: "2)- Ancylostomiasis: Question 19: Geographic distribution of ancylostomiasis include:" }, options: { en: ["A)- Worldwide", "B)- Mostly in areas with moist", "C)- Temperate climate", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 20, type: "mcq", question: { en: "Question 20: In the world people ancylostomiasis infected are estimated that:" }, options: { en: ["A)- Less than 1300 million people", "B)- More than 1300 million people.", "C)- Less than 130 million people", "D)- More than 130 million people", "E)- Others"] }, answer: { en: ["B)- More than 1300 million people."] } },
+            { number: 21, type: "mcq", question: { en: "Question 21: Morphology adult worms of ankylostoma hookworms include:" }, options: { en: ["A) - Female worms measure about 10 to 13 mm x 0.6 mm", "B) - Males Worms measure about 8 to 10 mm x 0.5 mm", "C)- The worms attach to the intestinal of the jejunum and duodenum by their mouth parts.", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 22, type: "mcq", question: { en: "Question 22: Morphology eggs of ankylostoma hookworms include:" }, options: { en: ["A) -Measure about 6 µm x 4 µm", "B) - Are oval and colorless", "C) -Are spherical and discolors", "D) - Measure about 60 µm x 40 µm", "E)-B+D."] }, answer: { en: ["E)-B+D."] } },
+            { number: 23, type: "mcq", question: { en: "Question 23: Host definitive of ankylostoma hookworms include:" }, options: { en: ["A)-Human.", "B)- Animal", "C)-Bird", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["A)-Human."] } },
+            { number: 24, type: "mcq", question: { en: "Question 24: Life cycle of ancylostomiasis include:" }, options: { en: ["A) - Eggs are passed in the stool, and under favorable conditions", "B) - Adult worms live in the lumen of the small intestine,", "C) - These larvae take seven to ten days to become infective (filariform larvae)", "D) - A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 25, type: "mcq", question: { en: "Question 25: Causes of ancylostomiasis include:" }, options: { en: ["A) - Persons walking barefoot over contaminated soil.", "B)- Good sanitation", "C) - Human feces are not used for fertilizer", "D) - Persons walking boot over non contaminated soil", "E)-Others"] }, answer: { en: ["A) - Persons walking barefoot over contaminated soil."] } },
+            { number: 26, type: "mcq", question: { en: "Question 26: Risk factors of ancylostomiasis include:" }, options: { en: ["A)- Inadequate sanitation", "B)- Optimal conditions for eggs", "C)- Low socioeconomic status and low education", "D)- Poor waste management systems", "E)-A+B+C+D."] }, answer: { en: ["E)-A+B+C+D."] } },
+            { number: 27, type: "mcq", question: { en: "Question 27: Transmission of ancylostomiasis include:" }, options: { en: ["A)- From person to person", "B)- Through penetration of the skin whereas", "C)- Percutaneously", "D)-A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 28, type: "mcq", question: { en: "Question 28: Incubation period of ancylostomiasis include:" }, options: { en: ["A)- Between a few weeks to many months", "B)- Between a few days to many weeks", "C)- Dependent on the number of hookworm parasites with which an individual is infected", "D)-A+B", "E)-A+C."] }, answer: { en: ["E)-A+C."] } },
+            { number: 29, type: "mcq", question: { en: "Question 29: Symptoms of ancylostomiasis include:" }, options: { en: ["A)- Intestinal bleeding", "B)- Itching", "C)- Malnutrition", "D)- A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 30, type: "mcq", question: { en: "Question 30: Diagnosis of ancylostomiasis include:" }, options: { en: ["A)- Biopsie of lung", "B)- Blood culture", "C)- Stool culture", "D)- Microscopic examination of stool.", "E)-A+B+C+D"] }, answer: { en: ["D)- Microscopic examination of stool."] } },
+            { number: 31, type: "mcq", question: { en: "Question 31: Differential diagnosis of ancylostomiasis include:" }, options: { en: ["A)- Amibiasis", "B)- Giardiasis", "C)- Strongyloidiasis", "D)- A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 32, type: "mcq", question: { en: "Question 32: Treatment of ancylostomiasis include:" }, options: { en: ["A)- Pyrantel pamoate", "B)- Albendazole", "C)- Mebendazole", "D)- Levamisole", "E)-A+B+C+D."] }, answer: { en: ["E)-A+B+C+D."] } },
+            { number: 33, type: "mcq", question: { en: "Question 33: Complications of ancylostomiasis include:" }, options: { en: ["A)- Intestines, metabolism syndromes", "B)- Rare complications", "C)- Cardiovascular system and respiratory tract.", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 34, type: "mcq", question: { en: "Question 34: Prognosis of ancylostomiasis include:" }, options: { en: ["A)- With lack of treatment, the prognosis is excellent.", "B)- Severe anemia retards childhood development and intellectual performance.", "C)- No need to treat", "D)-All patients are dark", "E)- A+B+C+D"] }, answer: { en: ["B)- Severe anemia retards childhood development and intellectual performance."] } },
+            { number: 35, type: "mcq", question: { en: "Question 35: Prevention of ancylostomiasis include:" }, options: { en: ["A)- Washing hands after handling or eating food", "B)- Wearing covered footwear in areas where the disease is endemic.", "C)- Washing hands after going to the toilet", "D)-A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } }
+        ];
+
+        let quizDataPart2 = [
+            { number: 36, type: "mcq", question: { en: "3)- Strongyloïdiasis: Question 36: Strongyloidiasis is a human parasitic disease caused by the:" }, options: { en: ["A) - Nematode (roundworm)", "B) - Cestode", "C) - Arthropode", "D)-Protozoaire", "E)-Others"] }, answer: { en: ["A) - Nematode (roundworm)"] } },
+            { number: 37, type: "mcq", question: { en: "Question 37: Geographic distribution of Strongyloidiasis:" }, options: { en: ["A) - Tropical regions of Africa, Asia and South America", "B) - Occidental regions of Africa, Asia and South America", "C) – Developed country", "D) - In the world", "E) - In Africa only"] }, answer: { en: ["A) - Tropical regions of Africa, Asia and South America"] } },
+            { number: 38, type: "mcq", question: { en: "Question 38: Morphology the trophozoite of Strongyloidiasis include:" }, options: { en: ["A) - Biggest parasites to infect humans", "B) - Rhabditiform larvae are shorter and slower", "C) - Buccal cavity is multiple", "D) - Males are thought to be parasitic", "E)-Others"] }, answer: { en: ["B) - Rhabditiform larvae are shorter and slower"] } },
+            { number: 39, type: "mcq", question: { en: "Question 39: Morphology the Eggs of Strongyloidiasis include:" }, options: { en: ["A) - The egg measures 60-80μm × 40-60μm", "B) - They are thick-shelled and spherical", "C) - They contain larva ready to hatch", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["C) - They contain larva ready to hatch"] } },
+            { number: 40, type: "mcq", question: { en: "Question 40: Host of Strongyloidiasis include:" }, options: { en: ["A) - Humans", "B) - Dogs", "C) - Cats", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 41, type: "mcq", question: { en: "Question 41: Invasive stage of Strongyloidiasis includes:" }, options: { en: ["A) -Tissue destruction", "B) - Skin penetration", "C) - During cycle", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["B) - Skin penetration"] } },
+            { number: 42, type: "mcq", question: { en: "Question 42: Risk factors of Strongyloidiasis include :" }, options: { en: ["A) - Live in or travel to city areas", "B) - Immuno competent", "C) - Travel to or live in South America, Africa, or other tropical regions", "D) - Practice good personal hygiene", "E)-Others"] }, answer: { en: ["C) - Travel to or live in South America, Africa, or other tropical regions"] } },
+            { number: 43, type: "mcq", question: { en: "Question 43: Transmission of Strongyloidiasis include:" }, options: { en: ["A) - Sexual contact", "B) - Auto-infection.", "C) - Feces", "D) - Skin contact", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 44, type: "mcq", question: { en: "Question 44: Incubation period of Strongyloidiasis include:" }, options: { en: ["A) - 4 - 10days", "B) - 10 - 20days", "C) - 1 – 5 weeks", "D) - 14 - 30days", "E) - 30 - 60days"] }, answer: { en: ["D) - 14 - 30days"] } },
+            { number: 45, type: "mcq", question: { en: "Question 45: Symptoms of Strongyloidiasis include:" }, options: { en: ["A) - Lower abdominal pain", "B) - Headache", "C) - Diarrhea or alternating diarrhea and constipation", "D) - Fever", "E)-A+B+C+D"] }, answer: { en: ["C) - Diarrhea or alternating diarrhea and constipation"] } },
+            { number: 46, type: "mcq", question: { en: "Question 46: Diagnosis of Strongyloidiasis base on microscopic examination of:" }, options: { en: ["A) - Cerebrospinal fluid", "B) - Sputum", "C) - Stool", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 47, type: "mcq", question: { en: "Question 47: Find 1 of all is not differential diagnosis of Strongyloidiasis include:" }, options: { en: ["A) - Cholera", "B) - Acute Respiratory Distress Syndrome", "C) – Septicemia", "D) - Chronic Obstructive Pulmonary Disease", "E) - Inflammatory Bowel Disease"] }, answer: { en: ["C) – Septicemia"] } },
+            { number: 48, type: "mcq", question: { en: "Question 48: Treatment of Strongyloidiasis include" }, options: { en: ["A) - Thiabendazole", "B) – Niclosamide", "C) - Ivermectin", "D)-A+B", "E)-A+C"] }, answer: { en: ["E)-A+C"] } },
+            { number: 49, type: "mcq", question: { en: "Question 49: Find 1 of all is not complications and sequelae of Strongyloidiasis include:" }, options: { en: ["A) - Malabsorption syndrome", "B) - Visceral larva migrans", "C) – Pneumonia", "D) - Bronchospasm", "E) - Gastrointestinal bleeding"] }, answer: { en: ["C) – Pneumonia"] } },
+            { number: 50, type: "mcq", question: { en: "Question 50: Prevention of Strongyloidiasis includes:" }, options: { en: ["A) - Use of footwear in endemic areas", "B) - Treat all not infected dogs, cats, and monkeys that are in contact with people.", "C) - Washing hand after eating", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["A) - Use of footwear in endemic areas"] } },
+            { number: 51, type: "mcq", question: { en: "4)- Trichocephaliasis: Question 51: Trichocephaliasis is a parasitic disease caused by infection of the:" }, options: { en: ["A) - Trichinella", "B) - Trichuris trichiura", "C) - Schistosoma", "D) - Giardia lamblia", "E) - Clonorchis sinensis"] }, answer: { en: ["B) - Trichuris trichiura"] } },
+            { number: 52, type: "mcq", question: { en: "Question 52: Morphology of adults male and female Trichocephaliasis include:" }, options: { en: ["A) - Females: 3 to 5 mm long", "B) - Females: 30 to 50 mm long", "C) - Males: 30 to 45 mm long", "D) - A+C", "E)-B+C"] }, answer: { en: ["E)-B+C"] } },
+            { number: 53, type: "mcq", question: { en: "Question 53: Causes of Trichocephaliasis include:" }, options: { en: ["A) - Ingestion of soil containing the eggs of the roundworm.", "B) - Ingestion of vegetables may also contain larvae of T. trichiura", "C) - Ingestion of water containing the larvae of the roundworm.", "D) - Direct contact", "E) - Others"] }, answer: { en: ["A) - Ingestion of soil containing the eggs of the roundworm."] } },
+            { number: 54, type: "mcq", question: { en: "Question 54: Symptoms of Trichocephaliasis include:" }, options: { en: ["A) - Fever", "B) - Headache", "C) – Anemia", "D) - Vomiting", "E) - Nausea"] }, answer: { en: ["C) – Anemia"] } },
+            { number: 55, type: "mcq", question: { en: "Question 55: Complications of Trichocephaliasis include:" }, options: { en: ["A) - Growth and developmental early in children.", "B) -Peritonitis", "C) - Appendicitis", "D) - Rectal prolapsed", "E) – Others"] }, answer: { en: ["D) - Rectal prolapsed"] } },
+            { number: 56, type: "mcq", question: { en: "Question 56: Prevention of Trichocephaliasis include:" }, options: { en: ["A) - Washing of food that may have been contaminated with egg-containing soil.", "B) - Hand washing before food handling", "C) - Improved facilities for disposal of faeces", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 57, type: "mcq", question: { en: "5)- Trichinellosis: Question 57: Trichinellosis is a disease caused by the parasite:" }, options: { en: ["A) - Entamoeba Histolytica", "B) – Ankylostoma", "C) - Clonorchis sinensis", "D) - Fasciolopsiasis", "E) - Others"] }, answer: { en: ["E) - Others"] } },
+            { number: 58, type: "mcq", question: { en: "Question 58: Morphology of Trichinella spiralis male and female include:" }, options: { en: ["A) - Males of T. spiralis measure 4 to 6 mm long", "B) - The females of T. spiralis are about 3 time the size of the males", "C) - Males of T. spiralis measure 1.4 to 1.6 mm long", "D)- A+B", "E)-A+B+C"] }, answer: { en: ["C) - Males of T. spiralis measure 1.4 to 1.6 mm long"] } },
+            { number: 59, type: "mcq", question: { en: "Question 59: Causes of Trichinellosis include:" }, options: { en: ["A) - Eaten meat containing the trichinellosis cysts", "B) - Eaten meat containing the trichinellosis trophozoite", "C) – Eat fruit and fresh vegetable", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["A) - Eaten meat containing the trichinellosis cysts"] } },
+            { number: 60, type: "mcq", question: { en: "Question 60: Transmission of Trichinellosis includes:" }, options: { en: ["A) – Direct contact", "B) - Consumption of raw or undercooked meat of uninfected animals", "C) - Consumption of cooked meat of infected animals", "D) - Consumption of unsafe water.", "E) – Others"] }, answer: { en: ["E) – Others"] } },
+            { number: 61, type: "mcq", question: { en: "Question 61: Incubation period of Trichinellosis include:" }, options: { en: ["A) - 1 - 2 days", "B) - 2 - 4 days", "C) - 5 - 10 days", "D) - 6 - 12 days", "E) - 8 - 15 days"] }, answer: { en: ["E) - 8 - 15 days"] } },
+            { number: 62, type: "mcq", question: { en: "Question 62: Symptoms of Trichinellosis for first stage include:" }, options: { en: ["A) - Headache", "B) - Eyes swelling", "C) - Itchy skin or rash", "D) - Abdominal pain", "E) - Chill"] }, answer: { en: ["D) - Abdominal pain"] } },
+            { number: 63, type: "mcq", question: { en: "Question 63: Symptoms of Trichinellosis for Second stage include:" }, options: { en: ["A) - Headache", "B) - Eyes swelling", "C) - Itchy skin or rash", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 64, type: "mcq", question: { en: "Question 64: Diagnosis of Trichinellosis includes:" }, options: { en: ["A) - Muscle biopsy", "B) - Blood test", "C) – Stool examination", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 65, type: "mcq", question: { en: "Question 65: Differential diagnosis of Trichinellosis includes:" }, options: { en: ["A) - Food Poisoning", "B) - Myopathies", "C) - Visceral Larva Migrans", "D) - Toxocariasis", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 66, type: "mcq", question: { en: "Question 66: Complications of Trichinellosis includes:" }, options: { en: ["A) – Myocarditis", "B) - Encephalitis", "C) - Meningitis", "D) - Pneumonia", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 67, type: "mcq", question: { en: "Question 67: Prevention of Trichinellosis includes:" }, options: { en: ["A) - Improve food safety for consumers", "B) - Good heating", "C) - Good freezing of raw meat.", "D)-A+B", "E) - A+B+C"] }, answer: { en: ["E) - A+B+C"] } }
+        ];
+
+        let quizDataPart3 = [
+            { number: 68, type: "mcq", question: { en: "6)- Schistosomiasis: Question 68: Schistosomiasis is a parasitic disease caused by:" }, options: { en: ["A) - Cestode", "B)-Trematode", "C)-Protozoaire", "D)-Arthropode", "E) - All of above"] }, answer: { en: ["B)-Trematode"] } },
+            { number: 69, type: "mcq", question: { en: "Question 69: Epidemiology of Schistosomiasis include:" }, options: { en: ["A) - Globally, 2,000 deaths are attributed to schistosomiasis annually", "B) - Affects almost 24 million people worldwid", "C) - The infection is prevalent in tropical and sub-tropical areas,", "D) - In communities with potable water and adequate sanitation.", "E) – Others"] }, answer: { en: ["C) - The infection is prevalent in tropical and sub-tropical areas,"] } },
+            { number: 70, type: "mcq", question: { en: "Question 70: Morphology of adult Schistosomiasis include:" }, options: { en: ["A) - Males don’t have many small nodules", "B) - Adult males are 10 to 15 mm long", "C) - Adult males are 20 to 30 mm long", "D) - Females are shorter than male", "E) - Both sexes have 3 suckers"] }, answer: { en: ["B) - Adult males are 10 to 15 mm long"] } },
+            { number: 71, type: "mcq", question: { en: "Question 71: Morphology of Eggs Schistosomiasis include:" }, options: { en: ["A) - The shells of the eggs are dark", "B) - 110-170 µm long by 40 to 70 mm wide", "C) - The shells of the eggs contain miracidia", "D)-A+B", "E)-B+C"] }, answer: { en: ["E)-B+C"] } },
+            { number: 72, type: "mcq", question: { en: "Question 72: Risk factors of Schistosomiasis include:" }, options: { en: ["A) - Live in areas where schistosomiasis occurs.", "B) - Travel to areas where no transmission of schistosomiasis.", "C) - Skin in contact with freshwater from canals", "D)-A+C", "E)-A+B+C"] }, answer: { en: ["D)-A+C"] } },
+            { number: 73, type: "mcq", question: { en: "Question 73: Transmission of schistosomiasis parasites by:" }, options: { en: ["A)- The parasites can penetrate the skin of persons who are wading, swimming etc", "B) - Drinking unsafe water", "C) - Eating fresh fruit", "D) - Direct contact with the patients", "E)-A+B+C+D"] }, answer: { en: ["A)- The parasites can penetrate the skin of persons who are wading, swimming etc"] } },
+            { number: 74, type: "mcq", question: { en: "Question 74: Incubation period of schistosomiasis include usually:" }, options: { en: ["A) - 4-10 days", "B) - 4-21 days", "C) - 14-24 days", "D) - 14-84 days", "E) - 14-100 days"] }, answer: { en: ["D) - 14-84 days"] } },
+            { number: 75, type: "mcq", question: { en: "Question 75: Early symptoms of schistosomiasis include:" }, options: { en: ["A) - General sense of feeling well", "B) - Nausea, Vomiting", "C) - Abdominal pain", "D) - Headache", "E)-A+B+C+D"] }, answer: { en: ["C) - Abdominal pain"] } },
+            { number: 76, type: "mcq", question: { en: "Question 76: Find 1 of all is not late symptoms or chronic schistosomiasis:" }, options: { en: ["A) - Blood in your urine", "B) - Cystitis", "C) - Headaches", "D) - Dizziness", "E) - Fever 38C"] }, answer: { en: ["E) - Fever 38C"] } },
+            { number: 77, type: "mcq", question: { en: "Question 77: Diagnosis of schistosomiasis include:" }, options: { en: ["A) - Blood test", "B) - Present eggs of schistosomia in stool or urine sample", "C) - Symptoms of schistosomiasis", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 78, type: "mcq", question: { en: "Question 78: Differential diagnosis of schistosomiasis includes:" }, options: { en: ["A) - Peptic ulcer disease", "B) - Pancreatitis", "C) - Pneumonia", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 79, type: "mcq", question: { en: "Question 79: Complications of schistosomiasis includes:" }, options: { en: ["A) - Carcinoma of bladder", "B) - Chronic kidney disease", "C) - Gastrointestinal obstruction", "D) - Hydro nephrosis", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 80, type: "mcq", question: { en: "Question 80: Prognosis of schistosomiasis includes:" }, options: { en: ["A) - Early disease usually not improves with treatment", "B) - Acute schistosomiasis is associated with a mortality rate of up to 25%", "C) - Can lead to renal failure due to obstructive uropathy, pyelonephritis,", "D)-B+C", "E)-A+B+C"] }, answer: { en: ["D)-B+C"] } },
+            { number: 81, type: "mcq", question: { en: "Question 81: Prevention of schistosomiasis includes:" }, options: { en: ["A) - Boil or filter water before drinking", "B) - Avoid paddling, swimming and washing in fresh water.", "C) - Take waterproof trousers and boots if you need to cross a stream or river.", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 82, type: "mcq", question: { en: "7)- Clonorchiasis senensis: Question 82: Geographic distribution of clonorchiasis senensis include:" }, options: { en: ["A)-Vietnam", "B) - Japan", "C)-Cambodia", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 83, type: "mcq", question: { en: "Question 83: Morphology of adult worm of clonorchiasis senensis include:" }, options: { en: ["A)-Elongated worm", "B) - Size 10-15 X3-5mm", "C) - 4 suckers", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 84, type: "mcq", question: { en: "Question 84: Morphology of eggs worm of clonorchiasis senensis include:" }, options: { en: ["A)-Cylindrical", "B)- Big", "C)-Peculated at 2 ends", "D)-Yellowish color.", "E)-Big knob at opposite end"] }, answer: { en: ["D)-Yellowish color."] } },
+            { number: 85, type: "mcq", question: { en: "Question 85: Definitive hosts of clonorchiasis senensis include:" }, options: { en: ["A)-Camels", "B)- Humans", "C)-Rats", "D)-Cats", "E)-A+B+C+D."] }, answer: { en: ["E)-A+B+C+D."] } },
+            { number: 86, type: "mcq", question: { en: "Question 86: Intermediate hosts of clonorchiasis senensis include:" }, options: { en: ["A)-Fish", "B) - Snails", "C) - Rats", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 87, type: "mcq", question: { en: "Question 87: Causes of clonorchiasis senensis include:" }, options: { en: ["A)-Eating freshwater fish containing the fluke cyst", "B) - Eating freshwater fish containing the fluke larvae", "C) - Eating vegetable and fruit non clean.", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 88, type: "mcq", question: { en: "Question 88: Risk factors of clonorchiasis senensis include:" }, options: { en: ["A) - Living far freshwater water bodies", "B) - People who eat freshwater fish that is good cooked", "C) - People who eat freshwater fish that is raw.", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["C) - People who eat freshwater fish that is raw."] } },
+            { number: 89, type: "mcq", question: { en: "Question 89: Route of transmission of clonorchiasis senensis include:" }, options: { en: ["A)-Eating raw fresh water fish which are previously infected.", "B) - Eating inadequately cooked fresh shrimp which are previously infected.", "C) - Eating adequately cooked fresh shrimp which are previously infected.", "D)-A+B.", "E)-A+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 90, type: "mcq", question: { en: "Question 90: Incubation period of clonorchiasis senensis include:" }, options: { en: ["A) - 1-2 weeks", "B) - 1-2 months.", "C) - 2-4 months", "D) - 1-2 days", "E) - 1-2 years"] }, answer: { en: ["B) - 1-2 months."] } },
+            { number: 91, type: "mcq", question: { en: "Question 91: Acute symptoms of clonorchiasis senensis include:" }, options: { en: ["A)-High fever", "B) - Slight jaundice", "C) - Hepathomegaly", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 92, type: "mcq", question: { en: "Question 92: Diagnosis of clonorchiasis senensis base on include:" }, options: { en: ["A)-Gastro intestinal symptoms (Hepatomegaly, cholangoitis etc…)", "B)- Discovery of characteristic eggs in feces", "C)-History of eating raw or inadequately cooked fresh water fish and shrimp", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 93, type: "mcq", question: { en: "Question 93: Differential diagnosis of clonorchiasis senensis include:" }, options: { en: ["A)-Bacterial hepatitis", "B) - Amebiasis", "C)-Lung cancer", "D)-Fasciolopsiasis.", "E)-Bronchitis"] }, answer: { en: ["D)-Fasciolopsiasis."] } },
+            { number: 94, type: "mcq", question: { en: "Question 94: Treatment of clonorchiasis senensis include:" }, options: { en: ["A)- Metronidazol", "B)- Praziquantel.", "C)-Tetracycline", "D)- Levamisole", "E)-A+B+C+D"] }, answer: { en: ["B)- Praziquantel."] } },
+            { number: 95, type: "mcq", question: { en: "Question 95: Complication of clonorchiasis senensis include:" }, options: { en: ["A)-Cholestatis cirrhosis", "B)- Pancreatitis", "C)- Lung abscess", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 96, type: "mcq", question: { en: "Question 96: Prognosis of clonorchiasis senensis include:" }, options: { en: ["A) - The Prognosis of clonorchiasis senensis is not good.", "B) - Late diagnosis may prevent long-term complications of Clonorchiasis such as cholangio carcinoma.", "C) - A proper and timely diagnosis and treatment can lead to a good prognosis.", "D)-A+B", "E)-B+C"] }, answer: { en: ["C) - A proper and timely diagnosis and treatment can lead to a good prognosis."] } },
+            { number: 97, type: "mcq", question: { en: "Question 97: Prevention of clonorchiasis senensis include:" }, options: { en: ["A) - Sanitary disposal of the excreta.", "B) - Vaccination", "C) - Immunization", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["A) - Sanitary disposal of the excreta."] } }
+        ];
+
+        let quizDataPart4 = [
+            { number: 98, type: "mcq", question: { en: "8)- fasciola hepatica: Question 98: Causes of fasciola hepatica by Eating include:" }, options: { en: ["A) - fluke-infested", "B) - Fresh-water raw", "C)-Undercooked fish", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 99, type: "mcq", question: { en: "Question 99: Morphology of fasciola hepatica. Form of adult fluke includes:" }, options: { en: ["A) - Flat leaf like body.", "B) - 30-50mm long", "C)-6-10mm long", "D) - 10-20mm large", "E) - 20-30mm large"] }, answer: { en: ["A) - Flat leaf like body."] } },
+            { number: 100, type: "mcq", question: { en: "Question 100: Morphology of fasciola hepatica. Form of eggs includes:" }, options: { en: ["A)-Peculated and unembryonated contains a big unsegmented ovum.", "B)- Red color", "C)-Spherical", "D)-Eggs can further develop only in soil.", "E)-A+B+C+D"] }, answer: { en: ["A)-Peculated and unembryonated contains a big unsegmented ovum."] } },
+            { number: 101, type: "mcq", question: { en: "Question 101: Definitive host of fasciola hepatica includes:" }, options: { en: ["A) - Snail", "B) - Sheep", "C) - Cattle", "D)-A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 102, type: "mcq", question: { en: "Question 102: Intermediate host of fasciola hepatica include:" }, options: { en: ["A)-Sheep", "B) - Snail", "C)-Cattle", "D) - Birth", "E)-Others"] }, answer: { en: ["B) - Snail"] } },
+            { number: 103, type: "mcq", question: { en: "Question 103: The life cycle of fasciola hepatica start when:" }, options: { en: ["A) - A female lays eggs in the liver of an infected human.", "B) - Immature eggs are discharged in the biliary ducts and taken out in the feces.", "C)-If landed in water, the eggs become non embryonated and develop larvae called miracidia.", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 104, type: "mcq", question: { en: "Question 104: Progress of infection to fasciola hepatica include:" }, options: { en: ["A)-Ex-cyst in duodenum", "B) - Ingestion metacercariae", "C)-Enters peritoneal cavity", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 105, type: "mcq", question: { en: "Question 105: Transmission of fasciola hepatica by:" }, options: { en: ["A)-Ingestion of metacercariae encysted on aquatic vegetation.", "B) - Contact of metacercariae encysted on aquatic vegetation.", "C) - Animal mature is used as primary fertilizer for cultivation of watercress.", "D)-A+B", "E)-A+C"] }, answer: { en: ["E)-A+C"] } },
+            { number: 106, type: "mcq", question: { en: "Question 106: Risk factors of fasciola hepatica include:" }, options: { en: ["A)-Eating undercooked sheep or goat livers that contain immature forms of the parasite.", "B) - Ingesting non contaminated water", "C)-Drinking it or by eating vegetables that were washed or irrigated with non contaminated water", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["A)-Eating undercooked sheep or goat livers that contain immature forms of the parasite."] } },
+            { number: 107, type: "mcq", question: { en: "Question 107: Symptoms of fasciola hepatica include:" }, options: { en: ["A)-Hepatic tenderness", "B) - Nausea", "C)-Prolonged high fever", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 108, type: "mcq", question: { en: "Question 108: Diagnosis of fasciola hepatica base on:" }, options: { en: ["A)-Stool examination", "B) - LCR examination", "C) - Blood examination", "D) - Blood culture", "E) - Others"] }, answer: { en: ["A)-Stool examination"] } },
+            { number: 109, type: "mcq", question: { en: "Question 109: Treatment of fasciola hepatica include:" }, options: { en: ["A)-Bithional", "B)- Triclabendazole", "C)-Surgery", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 110, type: "mcq", question: { en: "Question 110: Prevention of fasciola hepatica include:" }, options: { en: ["A)-Health education", "B) - Moluskicide", "C) - Use medecine for prevention", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 111, type: "mcq", question: { en: "9)- Fasciolopsis buski: Question 111: Fasciolopsis buski is classify the group of:" }, options: { en: ["A)-Cestodes", "B) – Nematodes", "C) - Trematodes", "D)-Protozoose", "E) - Others"] }, answer: { en: ["C) - Trematodes"] } },
+            { number: 112, type: "mcq", question: { en: "Question 112: Geographic distribution of Fasciolopsis buski found in:" }, options: { en: ["A)- Worldwide", "B)- Developed countries", "C) - Rural southeast Asia", "D) - Europe", "E) - Northeast Asia"] }, answer: { en: ["C) - Rural southeast Asia"] } },
+            { number: 113, type: "mcq", question: { en: "Question 113: Epidemiology of Fasciolopsis buski include:" }, options: { en: ["A) - 10 million individuals worldwide", "B) - 10 million individuals worldwide", "C) - The high incidence of infection was prevalent in male and children ages 2-5 years of age.", "D) - The high incidence of infection was prevalent in females and children ages 10–14 years of age.", "E)- Males are higher than female"] }, answer: { en: ["D) - The high incidence of infection was prevalent in females and children ages 10–14 years of age."] } },
+            { number: 114, type: "mcq", question: { en: "Question 114: Morphology adult worms of Fasciolopsis buski include:" }, options: { en: ["A) - Smallest fluke to infect humans", "B) - Non hermaphrodite", "C) - About 10–15 mm long", "D) - Non undulating", "E) - Leaf-shaped"] }, answer: { en: ["E) - Leaf-shaped"] } },
+            { number: 115, type: "mcq", question: { en: "Question 115: Morphology eggs of Fasciolopsis buski include:" }, options: { en: ["A) - Small", "B) - Thick-shelled", "C) -Thin-shelled", "D) - 13–16 micrometers (µm) long", "E) - 7–9 µm wide."] }, answer: { en: ["C) -Thin-shelled"] } },
+            { number: 116, type: "mcq", question: { en: "Question 116: Host of Fasciolopsis buski includes:" }, options: { en: ["A) - Pigs,", "B) - Humans", "C) - Dogs", "D) - Snail", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 117, type: "mcq", question: { en: "Question 117: Causes of Fasciolopsis buski include:" }, options: { en: ["A) - Direct transmission ( direct contact)", "B) - Eat raw aquatic plants", "C) - Undercooked aquatic plants", "D)-A+B", "E)-B+C"] }, answer: { en: ["E)-B+C"] } },
+            { number: 118, type: "mcq", question: { en: "Question 118: Risk factors of Fasciolopsis buski include:" }, options: { en: ["A) - Eating raw aquatic plants", "B) - School-age children", "C) - Lack of sufficient food inspection and sanitation", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 119, type: "mcq", question: { en: "Question 119: Incubation period of Fasciolopsis buski include:" }, options: { en: ["A) - 1-2 days", "B) - 1-2 weeks", "C) - 2 -4 weeks", "D) - 2 -4 months", "E) – Others"] }, answer: { en: ["E) – Others"] } },
+            { number: 120, type: "mcq", question: { en: "Question 120: Symptoms of fasciolopsis buski: heavy infections can include:" }, options: { en: ["A)- Obstruction of the bowel", "B)- Anemia", "C)- Swelling of the skin", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 121, type: "mcq", question: { en: "Question 121: Diagnosis of fasciolopsis buski can include:" }, options: { en: ["A) - Microscopic examination of stool", "B) - Travel history", "C) - Symptoms of fasciolopsis buski", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 122, type: "mcq", question: { en: "Question 122: Differential diagnosis of fasciolopsis buski can include:" }, options: { en: ["A) - Chronic gastritis.", "B) - Colite", "C)-Lung cancer", "D) - Appendicitis", "E) - Hepatitis"] }, answer: { en: ["A) - Chronic gastritis."] } },
+            { number: 123, type: "mcq", question: { en: "Question 123: Complications of fasciolopsis buski can include:" }, options: { en: ["A) - Intestinal perforation", "B) - Intestinal obstruction", "C) - Stomach perforation", "D) - Cancer of stomach", "E)-A+B"] }, answer: { en: ["E)-A+B"] } },
+            { number: 124, type: "mcq", question: { en: "Question 124: Prevention of fasciolopsis buski include:" }, options: { en: ["A) - Drinking water can be filtered or boiled", "B) - Pig feces should be used as a fertilizer in agriculture.", "C) - Human feces should be used as a fertilizer in agriculture", "D) - Freezing vegetables at 20 °C for a few days", "E)-A+B+C+D"] }, answer: { en: ["A) - Drinking water can be filtered or boiled"] } },
+            { number: 125, type: "mcq", question: { en: "10)- Diphyllobothrium latum: Question 125: The segments of the adult worm Diphyllobothrium latum is composed of:" }, options: { en: ["A) - Scolex", "B) - Neck", "C) – Lower body", "D)-A+B", "E) - A+B+C"] }, answer: { en: ["E) - A+B+C"] } },
+            { number: 126, type: "mcq", question: { en: "Question 126: Diphyllobothrium latum is the:" }, options: { en: ["A) - Smallest tape worm", "B) - Biggest tape worm", "C) – Longest tape worm", "D) - Medium tape worm", "E) – Others"] }, answer: { en: ["C) – Longest tape worm"] } },
+            { number: 127, type: "mcq", question: { en: "Question 127: Transmission of Diphyllobothrium latum is:" }, options: { en: ["A) - Contact person to person", "B) – Drinking and eating unsafe water and fruit.", "C) – Eating raw or undercooking freshwater fish.", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["C) – Eating raw or undercooking freshwater fish."] } },
+            { number: 128, type: "mcq", question: { en: "Question 128: Complication of Diphyllobothrium latum : Untreated, fish tapeworm infection may cause:" }, options: { en: ["A) - Intestinal blockage", "B) - Megaloblastic anemia", "C) - Peritonitis", "D)-A+B", "E)- A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 129, type: "mcq", question: { en: "11-12)- Taeniasis saginata and Taeniasis Solium: Question 129: Taeniasis saginata is a human’s parasitic infection caused by the tapeworm Species" }, options: { en: ["A) - Beef tapeworm", "B) - Pork tapeworm", "C) - Rodent tapeworm", "D) - Dog tapeworm", "E) - Others"] }, answer: { en: ["A) - Beef tapeworm"] } },
+            { number: 130, type: "mcq", question: { en: "Question 130: Taeniasis Solium is a humans parasitic infection caused by the tapeworm species:" }, options: { en: ["A) - Beef tapeworm", "B) - Pork tapeworm", "C) - Dog tapeworm", "D) - Rodent tapeworm", "E) - Others"] }, answer: { en: ["B) - Pork tapeworm"] } },
+            { number: 131, type: "mcq", question: { en: "Question 131: Geographic distribution of Taeniasis saginata include:" }, options: { en: ["A) - Worldwide", "B) - Latin America", "C) - Africa", "D)- A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 132, type: "mcq", question: { en: "Question 132: Geographic distribution of Taeniasis Solium include:" }, options: { en: ["A) - Latin America", "B) - Asia", "C) - Africa", "D) - Central and South America (especially Mexico, Venezuela, and Chile)", "E)-A+B+C"] }, answer: { en: ["D) - Central and South America (especially Mexico, Venezuela, and Chile)"] } },
+            { number: 133, type: "mcq", question: { en: "Question 133: Morphology of Taeniasis saginata include:" }, options: { en: ["A) – Scolex is globular", "B) - Scolex is quadrate", "C) - 700 to 1000 proglottids", "D) - 100,000 eggs per proglottid", "E) - Thin and transparent"] }, answer: { en: ["A) – Scolex is globular"] } },
+            { number: 134, type: "mcq", question: { en: "Question 134: Morphology of Taeniasis solium include:" }, options: { en: ["A) - Scolex is quadrate", "B) - 100,000 eggs per proglottid", "C) - Thin and transparent", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 135, type: "mcq", question: { en: "Question 135: Hote of Taeniasis saginata include:" }, options: { en: ["A) - Humans", "B) - Monkeys", "C) - Buffalo", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 136, type: "mcq", question: { en: "Question 136: Hote of Taeniasis solium include:" }, options: { en: ["A) – Giraffes", "B) - Monkeys", "C) - Buffalo", "D) - Rats", "E) - Dogs, cats are very rarely"] }, answer: { en: ["E) - Dogs, cats are very rarely"] } },
+            { number: 137, type: "mcq", question: { en: "Question 137: Causes of Taeniasis saginata include:" }, options: { en: ["A) - Eating raw or undercooked beef.", "B) - Eating raw or undercooked pork.", "C) - Contact with the stool", "D)-A+C", "E)-B+C"] }, answer: { en: ["D)-A+C"] } },
+            { number: 138, type: "mcq", question: { en: "Question 138: Causes of Taeniasis solium include:" }, options: { en: ["A) - Eating raw or undercooked beef.", "B) - Eating raw or undercooked pork.", "C) - Contact with the stool", "D)-A+C", "E)-B+C"] }, answer: { en: ["E)-B+C"] } },
+            { number: 139, type: "mcq", question: { en: "Question 139: Transmission of Taeniasis saginata includes:" }, options: { en: ["A) - Eating of undercooked beef containing the cysticerci", "B) - Eating raw or insufficiently cooked measly pork containing the cysticerci.", "C) – Indirect contact", "D)-A+C", "E)-B+C"] }, answer: { en: ["A) - Eating of undercooked beef containing the cysticerci"] } },
+            { number: 140, type: "mcq", question: { en: "Question 140: Transmission of Taeniasis solium include:" }, options: { en: ["A) - Eating of undercooked beef containing the cysticerci", "B) - Eating raw or insufficiently cooked measly pork containing the cysticerci.", "C) – Indirect contact", "D)-A+C", "E)-B+C"] }, answer: { en: ["B) - Eating raw or insufficiently cooked measly pork containing the cysticerci."] } },
+            { number: 141, type: "mcq", question: { en: "Question 141: Incubation period of Taeniasis saginata include:" }, options: { en: ["A) - 2 to 3 days", "B) - 2 to 3 weeks", "C) - 4 to 5 weeks", "D) - 2 to 3 months", "E) - 4 to 6 months"] }, answer: { en: ["D) - 2 to 3 months"] } },
+            { number: 142, type: "mcq", question: { en: "Question 142: Symptoms of Taeniasis solium include:" }, options: { en: ["A) - Abdominal pain", "B) - Constipation chronic", "C) - Loss of appetite", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 143, type: "mcq", question: { en: "Question 143: Medical treatment of Taeniasis solium includes:" }, options: { en: ["A) - Mebendazol", "B) - Metronidazol", "C) – Niclosamide", "D) - Rifampicine", "E) - A+B+C+D"] }, answer: { en: ["C) – Niclosamide"] } },
+            { number: 144, type: "mcq", question: { en: "Question 144: Complications of Taeniasis saginata include:" }, options: { en: ["A) - Intestinal obstruction", "B) - Cholecystitis", "C) - Meningitis", "D) - Pneumonia", "E) - Cystitis"] }, answer: { en: ["A) - Intestinal obstruction"] } },
+            { number: 145, type: "mcq", question: { en: "Question 145: Prevention of Taeniasis saginata includes:" }, options: { en: ["A) - Good hygiene and hand washing before using the toilet.", "B) - Avoiding raw meat and cooking meat well enough.", "C) - Freezing meats to -5° for 4 days.", "D) - B+C", "E)-A+B+C"] }, answer: { en: ["D) - B+C"] } }
+        ];
+
+        let quizDataPart5 = [
+            { number: 146, type: "mcq", question: { en: "13)- Hymenolepis nana or dwarf tapeworm: Question 146: Hymenolepis nana or dwarf tapeworm is:" }, options: { en: ["A) - Big tapeworm in humans", "B) - Small tapeworm in humans", "C) - Sometimes found in great numbers in the intestine.", "D)- A+B", "E)- B+C"] }, answer: { en: ["E)- B+C"] } },
+            { number: 147, type: "mcq", question: { en: "Question 147: Geographic distribution of Hymenolepis nana include:" }, options: { en: ["A) - Frequent in hot countries", "B) - Worldwide", "C) - Persons living in areas where sanitation and personal hygiene is adequate.", "D)- A+B", "E)-A+B+C"] }, answer: { en: ["D)- A+B"] } },
+            { number: 148, type: "mcq", question: { en: "Question 148: Infection of Hymenolepis nana is most common in:" }, options: { en: ["A) - Adults", "B) - Children aged 4-10 years", "C) - Children aged 2-4 years", "D) - Children aged 8-12 years", "E)-Immuno competent"] }, answer: { en: ["B) - Children aged 4-10 years"] } },
+            { number: 149, type: "mcq", question: { en: "Question 149: Adult worm of Hymenolepis nana is:" }, options: { en: ["A) - 100-200 proglottids", "B) - 10-45mm long", "C) - 0.5- 1mm wide", "D) - B+C", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 150, type: "mcq", question: { en: "Question 150: Definitive host of Hymenolepis nana includes:" }, options: { en: ["A) - Humans", "B) - Beetles", "C) - Fleas", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["A) - Humans"] } },
+            { number: 151, type: "mcq", question: { en: "Question 151: Intermediate host of Hymenolepis nana include:" }, options: { en: ["A) - Rodent", "B) - Humans", "C) – Beetles", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["C) – Beetles"] } },
+            { number: 152, type: "mcq", question: { en: "Question 152: Causes of Hymenolepis nana include:" }, options: { en: ["A) - Animals become non infected when they eat", "B) - Humans become infected when they eat", "C) - Material non contaminated by insects", "D) - A+B", "E)- A+B+C"] }, answer: { en: ["B) - Humans become infected when they eat"] } },
+            { number: 153, type: "mcq", question: { en: "Question 153: Risk factors of Hymenolepis nana include:" }, options: { en: ["A) - Contact with environments contaminated with human feces.", "B) - Consumption of untreated water", "C) - Presence of proper sanitation", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 154, type: "mcq", question: { en: "Question 154: Hymenolepis nana or dwarf tapeworm is a :" }, options: { en: ["A) - Big tapeworm in animal", "B) - Small tapeworm in animal", "C) - Big tapeworm in humans", "D) - Small tapeworm in humans", "E) - Medium tapeworm in humans"] }, answer: { en: ["D) - Small tapeworm in humans"] } },
+            { number: 155, type: "mcq", question: { en: "Question 155: Epidemiology of Hymenolepis nana :" }, options: { en: ["A)- Estimated rates of infection in various regions range from 0.1-58%.", "B)- It is estimated to have 50-75 million carriers of H. nana", "C)- Infection is most common in children aged 4-10 years", "D)- A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 156, type: "mcq", question: { en: "Question 156: Morphology adult worm of Hymenolepis nana :" }, options: { en: ["A) - 5-10mm long,", "B) - Neck is short", "C) - 10-20 proglottids", "D) - 0.5- 1mm wide", "E)-Others"] }, answer: { en: ["D) - 0.5- 1mm wide"] } },
+            { number: 157, type: "mcq", question: { en: "Question 157: Definitive host of Hymenolepis nana:" }, options: { en: ["A) - Beetles and Fleas", "B) - Rodent", "C) - Humans", "D)-A+B", "E)-B+C"] }, answer: { en: ["E)-B+C"] } },
+            { number: 158, type: "mcq", question: { en: "Question 158: Intermediate host of Hymenolepis nana :" }, options: { en: ["A) - Fleas", "B) - Beetles", "C) - Rodent", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 159, type: "mcq", question: { en: "Question 159: Life cycle of Hymenolepis nana :" }, options: { en: ["A) - Ingestion of H. nana eggs, primarily from human stool.", "B) - The eggs hatch in the stomach or small intestine, and the liberated larvae, or oncospheres, penetrate the villus in the upper small intestine.", "C) - The adult worms mature within several weeks", "D) - Accidental ingestion of the insect intermediate host can result in development of the adult worms.", "E) - A+B+C+D"] }, answer: { en: ["E) - A+B+C+D"] } },
+            { number: 160, type: "mcq", question: { en: "Question 160: All of answers are true exclude one is false answer the risk factors of Hymenolepis Nana, Find it:" }, options: { en: ["A) - Contact with environments contaminated with human feces.", "B) - Absence of proper sanitation", "C) - Adequate treatment of excreta and waste", "D) - Consumption of untreated water", "E) - Others"] }, answer: { en: ["C) - Adequate treatment of excreta and waste"] } },
+            { number: 161, type: "mcq", question: { en: "Question 161: Transmission of Hymenolepis Nana include:" }, options: { en: ["A) - Ingestion of food contaminated with feces (human or rodent) Fecal/oral contact.", "B) - Ingestion of infected beetle", "C) - Touching your mouth with contaminated fingers.", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 162, type: "mcq", question: { en: "Question 162: Incubation period of Hymenolepis Nana include:" }, options: { en: ["A) - 1 - 2weeks", "B) - 2 - 3weeks", "C) - 3 - 4weeks", "D) - 2 - 4weeks", "E) - 4 - 5weeks"] }, answer: { en: ["D) - 2 - 4weeks"] } },
+            { number: 163, type: "mcq", question: { en: "Question 163: Find the false answer of Hymenolepis Nana include:" }, options: { en: ["A) - Loss of appetite and loss of weight", "B) - Vomiting", "C) - Head ach", "D) - Gastrointestinal pain", "E) - Diarrhoea"] }, answer: { en: ["C) - Head ach"] } },
+            { number: 164, type: "mcq", question: { en: "Question 164: Diagnosis of Hymenolepis Nana include:" }, options: { en: ["A) - CT scan", "B) - Detection of eggs in stool", "C) - Stool culture", "D) - Scott test of Graham", "E)-Rx of lung"] }, answer: { en: ["B) - Detection of eggs in stool"] } },
+            { number: 165, type: "mcq", question: { en: "Question 165: Differential diagnosis of Hymenolepis Nana include:" }, options: { en: ["A) - Colitis", "B) - Ascariasis", "C) - Appendicitis", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 166, type: "mcq", question: { en: "Question 166: Medical treatment of Hymenolepis Nana include:" }, options: { en: ["A) - Praziquantel", "B) - Niclosamide", "C) - Albendazole.", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 167, type: "mcq", question: { en: "Question 167: Prevention of Hymenolepis Nana include:" }, options: { en: ["A) - Destruction of rats and mice", "B) - Good hygiene", "C) - Treating of infected persons", "D) - Destruction of insect", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 168, type: "mcq", question: { en: "14)- Echinococcus granulosus: Question 168: Definition of echinococcus granulosus: Echinococcus granulosus, also called hydatid worm belong to class:" }, options: { en: ["A)-Cestode.", "B) -Nematode", "C) - Bacteria", "D) - Virus", "E) -Others"] }, answer: { en: ["A)-Cestode."] } },
+            { number: 169, type: "mcq", question: { en: "Question 169: Reservoirs of echinococcus granulosus (definitive hosts):" }, options: { en: ["A) - Sheep", "B) - Deer", "C) - Goats", "D) – Horses", "E) – Dogs."] }, answer: { en: ["E) – Dogs."] } },
+            { number: 170, type: "mcq", question: { en: "Question 170: Reservoirs of echinococcus granulosus ( Intermediate hosts):" }, options: { en: ["A) - Wolves", "B) - Cats", "C) - Goats.", "D) – A+B", "E) –A+B+C"] }, answer: { en: ["C) - Goats."] } },
+            { number: 171, type: "mcq", question: { en: "Question 171: Differential diagnosis of echinococcus granulosus" }, options: { en: ["A)- Brain obstruction", "B) - Cholangitis", "C) - Biliary obstruction", "D) – A+B", "E) –A+B+C."] }, answer: { en: ["E) –A+B+C."] } }
+        ];
+
+        let quizDataPart6 = [
+            { number: 172, type: "mcq", question: { en: "15)- Giardiasis: Question 172: Giardiasis is a parasitic disease caused by:" }, options: { en: ["A) - Cestodes", "B) – Protozoan", "C) - Trematodes", "D) - Nematodes", "E) - Others"] }, answer: { en: ["B) – Protozoan"] } },
+            { number: 173, type: "mcq", question: { en: "Question 173: Find 1 of all is not high-risk groups of Giardiasis include:" }, options: { en: ["A) - Infants", "B) - International adoptees", "C) - Young children", "D) - Travelers", "E) - Immuno competent individuals"] }, answer: { en: ["E) - Immuno competent individuals"] } },
+            { number: 174, type: "mcq", question: { en: "Question 174: Reservoirs (definitive host) of Giardiasis include:" }, options: { en: ["A) - Bears", "B) - Humans", "C) - Primates", "D) - Cattle", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 175, type: "mcq", question: { en: "Question 175: In 2013 people with symptomatic giardiasis in the world :" }, options: { en: ["A) - 80 million", "B) - 180 million", "C) - 280 million", "D) - 380 million", "E) - 480 million"] }, answer: { en: ["C) - 280 million"] } },
+            { number: 176, type: "mcq", question: { en: "Question 176: The infective stage of G. intestinalis is:." }, options: { en: ["A) - Giardia trophozoites", "B) - Giardia cysts", "C) - Young trophozoite of giardia", "D) - Adult giardia trophozoites", "E)-Others"] }, answer: { en: ["B) - Giardia cysts"] } },
+            { number: 177, type: "mcq", question: { en: "Question 177: Causes of G. intestinalis include:" }, options: { en: ["A) - Eating safe food", "B) - Swallowing non contaminated water", "C) - Person-to-person contact", "D) - Homosexual", "E) - A+B+C+D"] }, answer: { en: ["C) - Person-to-person contact"] } },
+            { number: 178, type: "mcq", question: { en: "Question 178: High risk factors for Giardiasis include:" }, options: { en: ["A) - Travelers to non endemic areas", "B) - Live in a household with, people who are not sick with giardiasis", "C) - Immuno competent individuals", "D) - Sexually active homosexual men.", "E)- Others"] }, answer: { en: ["D) - Sexually active homosexual men."] } },
+            { number: 179, type: "mcq", question: { en: "Question 179: 1 of all is not the true answer the transmission of Giardiasis:" }, options: { en: ["A) - Swimming pools", "B) - Faeco-oral route", "C) - Direct contact with infected animals", "D) - Blood transfusion", "E) - Direct contact contaminated objects."] }, answer: { en: ["D) - Blood transfusion"] } },
+            { number: 180, type: "mcq", question: { en: "Question 180: Incubation period of Giardiasis:" }, options: { en: ["A) - 1-2 hours", "B) - 1-2 days", "C) - 1-2 months", "D) - 1-2 years", "E) – Others"] }, answer: { en: ["E) – Others"] } },
+            { number: 181, type: "mcq", question: { en: "Question 181: Symptoms of Giardiasis include:" }, options: { en: ["A) - Weight loss", "B) - Bloating", "C) - Loss of appetite", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 182, type: "mcq", question: { en: "Question 182: Diagnosis of Giardiasis include:" }, options: { en: ["A) - Blood examination", "B) - Fecal examination", "C) - Duodenal fluid examination", "D) - Bile examination", "E)-B+C+D"] }, answer: { en: ["E)-B+C+D"] } },
+            { number: 183, type: "mcq", question: { en: "Question 183: Treatment of G.intestinalis can include:" }, options: { en: ["A)-Albendazole", "B)-Metronidazole", "C)-Furazolidone", "D)-B+C", "E)-A+B+C"] }, answer: { en: ["D)-B+C"] } },
+            { number: 184, type: "mcq", question: { en: "Question 184: Differential diagnosis of G.intestinalis can include:" }, options: { en: ["A) - Amibiasis", "B) – Cryptosporidiosis", "C) - Bacterial gastroenteritis", "D) - Trchomoniasis", "E)-Hymenolepis nana"] }, answer: { en: ["B) – Cryptosporidiosis"] } },
+            { number: 185, type: "mcq", question: { en: "Question 185: Species of giardia include:" }, options: { en: ["A) - 2 different species", "B) - 3 different species", "C) - 4 different species", "D) - 5 different species", "E) - Others"] }, answer: { en: ["E) - Others"] } },
+            { number: 186, type: "mcq", question: { en: "Question 186: Complications of giardiasis include:" }, options: { en: ["A) - Dehydration.", "B) - Anemia", "C) - Appendicitis", "D) - Bronchitis", "E) - Encephalitis"] }, answer: { en: ["A) - Dehydration."] } },
+            { number: 187, type: "mcq", question: { en: "Question 187: Prognosis of giardiasis includes:" }, options: { en: ["A) - Death", "B) - Usually good", "C) - Re-infection can occur.", "D)-B+C", "E)-A+B+C"] }, answer: { en: ["D)-B+C"] } },
+            { number: 188, type: "mcq", question: { en: "Question 188: 1 of all is not the true answer the prevention of Giardiasis includes:" }, options: { en: ["A) - Safe drinking water", "B) - Travellers to endemic areas should avoid eating uncooked foods.", "C) - Breast-feeding is not protective", "D) - Hand washing and hygiene", "E) - Minimizing contact and contamination during sex."] }, answer: { en: ["C) - Breast-feeding is not protective"] } },
+            { number: 189, type: "mcq", question: { en: "16)- Trichomoniasis vaginalis: Question 189: In the world the sexually transmitted infection (STI) with Trichomonas vaginalis infection estimated per year around: " }, options: { en: ["A) - 248 million new cases", "B) - 248 million new and old cases", "C) - 200 million new cases", "D)-100 million new cases", "E) - 50 million new cases"] }, answer: { en: ["A) - 248 million new cases"] } },
+            { number: 190, type: "mcq", question: { en: "Question 190: Hote of Trichomonas vaginalis infection include:" }, options: { en: ["A) - Men", "B) - Women", "C) - Animal", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 191, type: "mcq", question: { en: "Question 191: Trichomonas vaginalis resides in the: " }, options: { en: ["A) - Upper genital female tract", "B) - Lower genital female tract", "C) - Male urethra", "D)- Male prostate", "E)-B+C+D"] }, answer: { en: ["E)-B+C+D"] } },
+            { number: 192, type: "mcq", question: { en: "Question 192: Trichomonas vaginalis is transmitted by:" }, options: { en: ["A) – Indirect contact", "B) - Airborn route", "C) - Sexual intercourse", "D) - Water and food", "E)-A+B+C+D"] }, answer: { en: ["C) - Sexual intercourse"] } },
+            { number: 193, type: "mcq", question: { en: "Question 193: Risks factors of Trichomonas vaginalis include:" }, options: { en: ["A) - Having multiple sexual partners", "B) - Sex without a condom", "C) - Prior infection with trichomoniasis", "D) - A history of other STIs", "E) - A+B+C+D"] }, answer: { en: ["E) - A+B+C+D"] } },
+            { number: 194, type: "mcq", question: { en: "Question 194: Incubation period of Trichomonas vaginalis include:" }, options: { en: ["A) - Between 3 to 28 days", "B) - Average 7 days", "C) - May survive in a host for 2+ years", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 195, type: "mcq", question: { en: "Question 195: Symptoms of Trichomonas vaginalisin in women include: " }, options: { en: ["A) - Burning sensation after ejaculation", "B) - Unusual penile discharge with a strong odor", "C) - Tingling inside the penis", "D) - Discomfort during intercourse", "E) - Others"] }, answer: { en: ["D) - Discomfort during intercourse"] } },
+            { number: 196, type: "mcq", question: { en: "Question 196: Symptoms of Trichomonas vaginalis in man include: " }, options: { en: ["A) - Blood spotting", "B) - Burning sensation after ejaculation", "C) - Abdominal pain", "D) - Genital itching and/or burning", "E) - Discomfort during intercourse"] }, answer: { en: ["B) - Burning sensation after ejaculation"] } },
+            { number: 197, type: "mcq", question: { en: "Question 197: Treatment of Trichomonas vaginalis include: " }, options: { en: ["A) - Treat the patients et partners at the same time", "B) - Local Treatment", "C) - Fasigyne", "D) - Metronidazol", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 198, type: "mcq", question: { en: "Question 198: Complications of Trichomonas vaginalis include: " }, options: { en: ["A) - Risk of developing pneumonia infection", "B) – Acute respiratory infection", "C) - Meningitis", "D) - Appendicitis", "E) - Low birth weight"] }, answer: { en: ["E) - Low birth weight"] } },
+            { number: 199, type: "mcq", question: { en: "Question 199: Prognosis of Trichomonas vaginalis include: " }, options: { en: ["A) - The cure rate is 90% if all sexual partners are treated at the same time.", "B) - The prognosis for treated is excellent", "C) - Any sexual partner is treated, reinfection is likely.", "D)-A+B", "E)-B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 200, type: "mcq", question: { en: "Question 200: Prevention of Trichomonas vaginalis include: " }, options: { en: ["A) - Treatment the patients and partners.", "B) - Use condoms (male or female) every time you have vaginal or anal sex.", "C) - Sharing sex toys", "D) - A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 201, type: "mcq", question: { en: "17)- Amebiasis: Question 201: Amebiasis is a disease caused by a parasite called: " }, options: { en: ["A)- Balantidium coli", "B)- Entamoeba Histolytica.", "C)- Fasciolopsis", "D)- Trichuris trichiura", "E)- Others"] }, answer: { en: ["B)- Entamoeba Histolytica."] } },
+            { number: 202, type: "mcq", question: { en: "Question 202: Incidence of amebiasis is higher in : " }, options: { en: ["A)- Africa country", "B)- Occidental countries", "C)- Developped countries.", "D)- Developing countries. .", "E)- Others"] }, answer: { en: ["D)- Developing countries. ."] } },
+            { number: 203, type: "mcq", question: { en: "Question 203: Industrialized countries, risk groups of amebiasis include:" }, options: { en: ["A)- Travelers to endemic area.", "B)- Male homosexuals", "C)- Institutionalized populations", "D)- A÷B", "E)- A÷B÷C ."] }, answer: { en: ["E)- A÷B÷C ."] } },
+            { number: 204, type: "mcq", question: { en: "Question 204: Prevalence of amebic infection varies with: " }, options: { en: ["A)- Level of sanitation", "B)- Higher in tropics and subtropics than in temperate climates.", "C)- Lower in tropics and subtropics than in temperate climates.", "D)- A+B.", "E)- B+C"] }, answer: { en: ["D)- A+B."] } },
+            { number: 205, type: "mcq", question: { en: "Question 205: The leading cause of mortality due to parasitic disease in humans with Entamoeba histolytica is the:" }, options: { en: ["A) - First", "B)-Second .", "C) - Third", "D)-Fourth", "E) - Others"] }, answer: { en: ["B)-Second ."] } },
+            { number: 206, type: "mcq", question: { en: "Question 206: Different form of E. histolytica include:" }, options: { en: ["A) - Precyst", "B) - Cyst", "C)- Trophozoite", "D)- A+B", "E)- A+B+C ."] }, answer: { en: ["E)- A+B+C ."] } },
+            { number: 207, type: "mcq", question: { en: "Question 207: Trophozoite form of Entamoeba Histolytica includes:" }, options: { en: ["A) - Oval-shaped", "B) - Spherical", "C) - Thin cell membrane", "D) - Single nucleus", "E) - A+B+c+D."] }, answer: { en: ["E) - A+B+c+D."] } },
+            { number: 208, type: "mcq", question: { en: "Question 208: Characteristics the cysts of amebiase include:" }, options: { en: ["A)- Mature cysts (spherical, 12–15 µm in diameter) are passed in the feces of an infected human.", "B)- Cysts (infective), only exist outside the host.", "C)- Non-motile and surrounded by a wall that includes chitin to help survive the acid in the stomach.", "D)-A+B", "E)-A+B+C ."] }, answer: { en: ["E)-A+B+C ."] } },
+            { number: 209, type: "mcq", question: { en: "Question 209: Hote the parasite of amebiasis include:" }, options: { en: ["A)- Humans.", "B)- Soil", "C)- Water", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["A)- Humans."] } },
+            { number: 210, type: "mcq", question: { en: "Question 210: The lifecycle of Amebiasis include:" }, options: { en: ["A) - Complex", "B)-Very simple.", "C) - Sometime complex and sometime simple.", "D)- Depend the immunities of the individuals", "E)- All of above"] }, answer: { en: ["B)-Very simple."] } },
+            { number: 211, type: "mcq", question: { en: "Question 211: Risk factors of Amebiasis include:" }, options: { en: ["A)- People who live in developing countries", "B)- Although anyone can have this disease", "C)- Poor sanitary conditions", "D)- Men who have sex with men", "E)- A+B+C+D."] }, answer: { en: ["E)- A+B+C+D."] } },
+            { number: 212, type: "mcq", question: { en: "Question 212: Transmission of amebiasis include:" }, options: { en: ["A)- Food or drink contaminated with feces containing the E.his cyst.", "B)- Veneral transmission among homosexual males ( oral-anal).", "C)- Direct contact of person to person ( fecal-oral).", "D)- Use of human feces (night soil) for soil fertilizer", "E)-A+B+C+D."] }, answer: { en: ["E)-A+B+C+D."] } },
+            { number: 213, type: "mcq", question: { en: "Question 213: Mild symptoms of amebiasis include:" }, options: { en: ["A)- Abdominal tenderness", "B)- Diarrhea or dysentery.", "C)- Vomiting", "D)- Bloody stools 10 to 20 stools per day", "E)- Fever"] }, answer: { en: ["B)- Diarrhea or dysentery."] } },
+            { number: 214, type: "mcq", question: { en: "Question 214: Severe symptoms of amebiasis include:" }, options: { en: ["A)- Diarrhea or dysentery", "B)- Bloody stools 10 to 20 stools per day.", "C)- Weight loss", "D)- Cramping", "E)- Chronic fatigue"] }, answer: { en: ["B)- Bloody stools 10 to 20 stools per day."] } },
+            { number: 215, type: "mcq", question: { en: "Question 215: Diagnosis of amebiasis based on :" }, options: { en: ["A)- Stool examination", "B)- Antigen detection (ELISA assays)", "C)- Antibody detection (Indirect hemagglutination)", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 216, type: "mcq", question: { en: "Question 216: Differential diagnosis of amebiasis include:" }, options: { en: ["A)- Pneumonia", "B)- Abdominal Abscess", "C)- Abdominal perforation", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 217, type: "mcq", question: { en: "Question 217: Treatment intestinal amebiasis with:" }, options: { en: ["A)- Emetine hydrochloride", "B)- Metronidazole", "C)- Chloroquine", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 218, type: "mcq", question: { en: "Question 218: Treatment extra intestinal amebiasis with:" }, options: { en: ["A)- Metronidazole", "B)- Dehydroemetine", "C)- Cephalosporine", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 219, type: "mcq", question: { en: "Question 219: Complications of amebiasis include:" }, options: { en: ["A)- Appendicitis", "B)- Liver abscess.", "C)- Meningitis", "D)- Encephalitis", "E)-A+B+C+D"] }, answer: { en: ["B)- Liver abscess."] } },
+            { number: 220, type: "mcq", question: { en: "Question 220: Prognosis of amebiasis include:" }, options: { en: ["A)- Untreated invasive amoebiasis is frequently good.", "B)- Relapse possible", "C)- With treatment improvement usually occurs with a few days.", "D)- A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 221, type: "mcq", question: { en: "Question 221: Prevention of amebiasis include:" }, options: { en: ["A)- Drink purified water.", "B)- Eat unpeeled fruit.", "C)- Eat uncooked vegetables", "D)- Drink unpurified water", "E)-A+B+C"] }, answer: { en: ["A)- Drink purified water."] } },
+            { number: 222, type: "mcq", question: { en: "18)- Balantidiasis: Question 222: Balantidiasis is a disease caused by the parasite include:" }, options: { en: ["A)- Schistosoma", "B)- Fasciolopsis", "C)-Balantidium coli.", "D)-Onchocerca volvulus", "E)-Echinococcus granulosus"] }, answer: { en: ["C)-Balantidium coli."] } },
+            { number: 223, type: "mcq", question: { en: "Question 223: Trophozoite formes of Balantidium coli include:" }, options: { en: ["A)-50-130 µm long", "B)- Covered in cilia", "C)-Micro nuclei and macro nuclei", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 224, type: "mcq", question: { en: "Question 224: Cyst forms of Balantidium coli include: " }, options: { en: ["A)- Reproductive", "B)- Not infective", "C)- 4-6 µm across", "D)-Only macronucleus.", "E)-A+B+C+D"] }, answer: { en: ["D)-Only macronucleus."] } },
+            { number: 225, type: "mcq", question: { en: "Question 225: Host of balantidium coli parasite include:" }, options: { en: ["A)-Human", "B)- Dogs", "C)-Pigs", "D)-Monkeys", "E)-A+B+C+D."] }, answer: { en: ["E)-A+B+C+D."] } },
+            { number: 226, type: "mcq", question: { en: "Question 226: Life cycle of balantidium coli parasite include:" }, options: { en: ["A)-Pig accidental host", "B)- Route : Ingestion", "C)-Reproduction : Only sexual", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 227, type: "mcq", question: { en: "Question 227: Causes of balantidiasis include:" }, options: { en: ["A)- By infection called balantidiasis", "B)- Parasite passed directly to humans by contact with pig feces", "C)- Indirectly by drinking contaminated water.", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 228, type: "mcq", question: { en: "Question 228: Risk factors of balantidiasis include:" }, options: { en: ["A)- Handling fertilizer contaminated with pig excrement,", "B)- Poor nutrition, alcoholism, and immuno-suppression", "C)- Living in areas where the water supply may be not contaminated by the excrement of animals.", "D)-A+B.", "E)-A+B+C"] }, answer: { en: ["D)-A+B."] } },
+            { number: 229, type: "mcq", question: { en: "Question 229: Incubation period of balantidiasis include:" }, options: { en: ["A)- Depends on the infective dose and the health of the patient. .", "B)- Not depends on the infective dose and the health of the patient", "C)- 10-15 days", "D)- 5-7 days", "E)-A+C"] }, answer: { en: ["A)- Depends on the infective dose and the health of the patient. ."] } },
+            { number: 230, type: "mcq", question: { en: "Question 230: Sign and symptoms of balantidiasis include:" }, options: { en: ["A)-Diarrhea", "B)- Colitis", "C)- Ulceration to gut wall", "D)- Dysentery", "E)-A+B+C+D."] }, answer: { en: ["E)-A+B+C+D."] } },
+            { number: 231, type: "mcq", question: { en: "Question 231: Diagnosis of balantidiasis include:" }, options: { en: ["A)- Biopsy", "B)-Examination of patient’s stool.", "C)-Sigmoid scope.", "D)-A+B", "E)-A+B+C."] }, answer: { en: ["E)-A+B+C."] } },
+            { number: 232, type: "mcq", question: { en: "Question 232:Drugs are commonly used and administered for treatment of balantidiasis include:" }, options: { en: ["A)-Rifampicine", "B)- Mebendazol", "C)-Tetracycline.", "D)-Albendazol", "E)-Chloramphenicol"] }, answer: { en: ["C)-Tetracycline."] } },
+            { number: 233, type: "mcq", question: { en: "Question 233: Complications of balantidiasis include:" }, options: { en: ["A)- Meningitis", "B)- Intestinal perforation.", "C)-Encephalitis", "D)-Urinary Infection", "E)-Pneumonia"] }, answer: { en: ["B)- Intestinal perforation."] } },
+            { number: 234, type: "mcq", question: { en: "Question 234: Prognosis of balantidiasis include:" }, options: { en: ["A) - Not dependent on the patient's overall health", "B) - Severely infected patients occasionally die as a result of a tear in the intestinal Wall consequent loss of blood.", "C) - Most patients with balantidiasis is good if treated in time with appropriate antibiotics.", "D)-A+B", "E)-B+C."] }, answer: { en: ["E)-B+C."] } },
+            { number: 235, type: "mcq", question: { en: "Question 235: Control and prevention of balantidiasis include:" }, options: { en: ["A) - Persons walking boot over non contaminated soil", "B) - Wearing covered footwear in areas where the disease is endemic.", "C)-Prevention and control sanitary disposal of human and pigs feces.", "D)-A+C", "E)-B+C"] }, answer: { en: ["C)-Prevention and control sanitary disposal of human and pigs feces."] } }
+        ];
+
+        let quizDataPart7 = [
+            { number: 1, type: "mcq", question: { en: " Question 1: Leishmaniasis is a disease caused by:" }, options: { en: ["A)- Trichophyton genus", "B)- Microsporum", "C)- Toxoplasma gondii", "D)- Others"] }, answer: { en: ["D)- Others"] } },
+            { number: 2, type: "mcq", question: { en: "Question 2: Leishmaniasis occurs in:" }, options: { en: ["A)- 80 tropical and subtropical countries.", "B)- 88 tropical and subtropical countries.", "C)- 80 tropical and countries.", "D)- 88 subtropical countries.", "E)- Others"] }, answer: { en: ["B)- 88 tropical and subtropical countries."] } },
+            { number: 3, type: "mcq", question: { en: "Question 3: Leishmaniasis caused about:" }, options: { en: ["A)- 52,000 deaths in 2010.", "B)- 87,000 deaths in 1990.", "C)- 1.5–2.0 million new cases each year.", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["E)- A+B+C"] } },
+            { number: 4, type: "mcq", question: { en: "Question 4: Leishmaniasis is caused by :" }, options: { en: ["A)- Mosquitoes", "B)- flies", "C)- Sand flies", "D)- Parasite", "E)- Others"] }, answer: { en: ["C)- Sand flies"] } },
+            { number: 5, type: "mcq", question: { en: "Question 5: Risk factors of Leishmaniasis include:" }, options: { en: ["A)- Deforestation", "B)- Malnutrition", "C)- Urbanization", "D)- Poverty", "E)- A+B+C+D"] }, answer: { en: ["E)- A+B+C+D"] } },
+            { number: 6, type: "mcq", question: { en: "Question 6: Risk factors of Leishmaniasis is:" }, options: { en: ["A)- Immunocompetent", "B)- Old men", "C)- Diabetic", "D)- Poverty", "E)- A+B+C+D"] }, answer: { en: ["D)- Poverty"] } },
+            { number: 7, type: "mcq", question: { en: "Question 7: Infections of Leishmaniasis in humans are caused by :" }, options: { en: ["A)- More than 20 species of Leishmania.", "B)- Less than 20 species of Leishmania.", "C)- 20 species of Leishmania.", "D)- 1 specie of Leishmania.", "E)- Others"] }, answer: { en: ["A)- More than 20 species of Leishmania."] } },
+            { number: 8, type: "mcq", question: { en: "Question 8: An infective stage the sand flies inject:" }, options: { en: ["A)- Amastigotes", "B)- Metacyclic promastigotes", "C)- Macrophages infected with amastigotes", "D)- Multiply and migrate to the proboscis.", "E)- Others"] }, answer: { en: ["B)- Metacyclic promastigotes"] } },
+            { number: 9, type: "mcq", question: { en: "Question 9: The components of Leishmaniasis saliva include the factors of :" }, options: { en: ["A)- Vasodilatory", "B)- Anticlotting", "C)- Inhibit wound healing", "D)- Anestesic", "E)- A+B+C"] }, answer: { en: ["E)- A+B+C"] } },
+            { number: 10, type: "mcq", question: { en: "Question 10: Symptoms of cutaneous leishmaniasis include:" }, options: { en: ["A)- Diarrhea", "B)- Stuffy nose", "C)- Swallowing difficulty", "D)- A+B", "E)- B+C"] }, answer: { en: ["E)- B+C"] } },
+            { number: 11, type: "mcq", question: { en: "Question 11: Symptoms of visceral infection in children include:" }, options: { en: ["A)- Diarrhea", "B)- Runny nose", "C)- Swallowing difficulty", "D)- Skin ulcer", "E)- Others"] }, answer: { en: ["A)- Diarrhea"] } },
+            { number: 12, type: "mcq", question: { en: "Question 12: All of them are the true answers only one is the false answer. Find the false answer: Symptoms of cutaneous leishmaniasis include:" }, options: { en: ["A)- Swallowing difficulty", "B)- Ulcers in the mouth.", "C)- Stomach ulcer", "D)- Skin ulcer", "E)- Inner nose ulcer"] }, answer: { en: ["C)- Stomach ulcer"] } },
+            { number: 13, type: "mcq", question: { en: "Question 13: Other symptoms of systemic visceral Leishmaniasis may include:" }, options: { en: ["A)- Thinning hair", "B)- Weight loss", "C)- Abdominal discomfort", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 14, type: "mcq", question: { en: "Question 14: Leishmaniasis is diagnosed by:" }, options: { en: ["A)- Liquid cerebrospinal examination", "B)- Microscopic examination of the stool", "C)- Blood culture", "D)- Biopsy of the spleen, skin , liver and culture", "E)- Others"] }, answer: { en: ["D)- Biopsy of the spleen, skin , liver and culture"] } },
+            { number: 15, type: "mcq", question: { en: "Question 15: Treatment of Leishmaniasis:" }, options: { en: ["A)- Pentamidine", "B)- Paromomycin", "C)- Rifampicine", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["D)- A+B"] } },
+            { number: 16, type: "mcq", question: { en: "Question 16: Complications of Leishmaniasis include:" }, options: { en: ["A)-Disfigurement of the face", "B)- Deadly infections due to immune system damage", "C)- Bleeding (hemorrhage)", "D)- A+B+C", "E)- Others"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 17, type: "mcq", question: { en: "Question 17: Prognosis of Leishmaniasis include:" }, options: { en: ["A)- Cure rates are high with the proper medicine", "B)- Patients should get treated before damage", "C)- Death is usually caused by complications (such as other infections)", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["E)- A+B+C"] } },
+            { number: 18, type: "mcq", question: { en: "Question 18: Plastic surgery for the treatment of Leishmaniasis may be needed to correct the disfigurement caused:" }, options: { en: ["A)- Disfigurement of the face.", "B)- Disfigurement of the abdomen.", "C)- Disfigurement of the hand.", "D)- Disfigurement of the foot.", "E)- A+B+C+D"] }, answer: { en: ["A)- Disfigurement of the face."] } },
+            { number: 19, type: "mcq", question: { en: "Question 19: Prevention of Leishmaniasis include:" }, options: { en: ["A)- Vaccination", "B)- Opening windows", "C)- Preventing sand fly bites", "D)- Chemotherapy", "E)- Others"] }, answer: { en: ["C)- Preventing sand fly bites"] } },
+            { number: 20, type: "mcq", question: { en: "Question 12: Malaria is an infectious disease caused by a parasite namely:" }, options: { en: ["A) - Plasmodium", "B) - Toxoplasma gondii", "C) - Histoplasma", "D)- Candida albican", "E)- Leishmania"] }, answer: { en: ["A) - Plasmodium"] } },
+            { number: 21, type: "mcq", question: { en: "Question 13: Malaria parasites infect humans caused by:" }, options: { en: ["A)- 2 species", "B)- 3 species", "C)- 4 species", "D)- 5 species"] }, answer: { en: ["D)- 5 species"] } },
+            { number: 22, type: "mcq", question: { en: "Question 14: The most prevalent malaria parasite on the Africa and Asia and responsible for most malaria-related deaths globally is:" }, options: { en: ["A)- Plasmodium vivax", "B)- Plasmodium falciparum", "C)- Plasmodium malariae", "D)- Plasmodium knowlesi"] }, answer: { en: ["B)- Plasmodium falciparum"] } },
+            { number: 23, type: "mcq", question: { en: "Question 15: In most cases, malaria is transmitted through the:" }, options: { en: ["A)- Water and food", "B)- Sexuality", "C)- Bites of female Anopheles mosquitoes", "D)- Stool"] }, answer: { en: ["C)- Bites of female Anopheles mosquitoes"] } },
+            { number: 24, type: "mcq", question: { en: "Question 16: Risk factors for malaria transmission include:" }, options: { en: ["A)-Using bet net in high transmission area", "B)- Live or work in the forest", "C)- New settlers in non transmission area", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 25, type: "mcq", question: { en: "Question 17: Incubation period of malaria from:" }, options: { en: ["A)- 2 days to 1 weeks after infection", "B)- 7 days to 2 weeks after infection", "C)- 20 days to 6 weeks after infection", "D)- 10 days to 4 weeks after infection"] }, answer: { en: ["B)- 7 days to 2 weeks after infection"] } },
+            { number: 26, type: "mcq", question: { en: "Question 18: Main symptom of simple malaria include:" }, options: { en: ["A)- Prostration", "B)- Circulatory collapse", "C)- Pulmonary oedema", "D)- Fever, Chills, Sweating"] }, answer: { en: ["D)- Fever, Chills, Sweating"] } },
+            { number: 27, type: "mcq", question: { en: "Question 19: Symptom severe or complicated malaria include:" }, options: { en: ["A)- Enlarged spleen or liver", "B)- Loss of appetite", "C)- Nausea", "D)- Respiratory distress"] }, answer: { en: ["D)- Respiratory distress"] } },
+            { number: 28, type: "mcq", question: { en: "Question 20: Malaria is diagnosed by:" }, options: { en: ["A)- Blood examination", "B)- Stool examination", "C)- Biopsy examination", "D)- A+B+C"] }, answer: { en: ["A)- Blood examination"] } },
+            { number: 29, type: "mcq", question: { en: "Question21: Prevention of malaria include:" }, options: { en: ["A)-Chemotherapy", "B)- Sexuality prevention", "C)- Water and food safety", "D)- Insecticide-treated mosquito nets"] }, answer: { en: ["D)- Insecticide-treated mosquito nets"] } },
+            { number: 30, type: "mcq", question: { en: "Question 22: The causes toxoplasmosis is found in human infection may result from:" }, options: { en: ["A)- Blood transfusions", "B)- Bites of sand fly", "C)- Eating good cooked meat (lamb, pork, and beef )", "D)- A+B+C"] }, answer: { en: ["C)- Eating good cooked meat (lamb, pork, and beef )"] } },
+            { number: 31, type: "mcq", question: { en: "Question 23:Toxoplasmosis can be transmitted to humans by:" }, options: { en: ["A)-2 principal routes", "B)- 3 principal routes", "C)-4 principal routes", "D)-5 principal routes"] }, answer: { en: ["B)- 3 principal routes"] } },
+            { number: 32, type: "mcq", question: { en: "Question24: Toxoplasmosis can be transmitted to humans by:" }, options: { en: ["A)-Ingestion of raw or adequately cooked infected meat", "B)-Washed fruits or vegetables", "C)- Infected pregnant woman passing the infection to her unborn fetus", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 33, type: "mcq", question: { en: "Question 25: Risk factors for infection of toxoplasmosis include:" }, options: { en: ["A)- Persons with immune-competent systems", "B)-Those taking certain types of chemoprophylaxis", "C)-Those who have recently received an organ transplant", "D)-A+B+C"] }, answer: { en: ["C)-Those who have recently received an organ transplant"] } },
+            { number: 34, type: "mcq", question: { en: "Question 26:Symptoms of Toxoplasmosis include:" }, options: { en: ["A)- Weight loss", "B)-Diarrhea", "C)-Poor coordination", "D)-A+B+C"] }, answer: { en: ["C)-Poor coordination"] } },
+            { number: 35, type: "mcq", question: { en: "Question 27:Toxoplasmosis is diagnosed by:" }, options: { en: ["A)- Biological", "B)- Serological", "C)- Culture", "D)-A+B"] }, answer: { en: ["B)- Serological"] } },
+            { number: 36, type: "mcq", question: { en: "Question 28: Complications of Toxoplasmosis include:" }, options: { en: ["A)- Relapse", "B)- Death( weak immune system)", "C)- Reinfection", "D)- A+B"] }, answer: { en: ["D)- A+B"] } },
+            { number: 37, type: "mcq", question: { en: "Question 29: Prevention of Toxoplasmosis include:" }, options: { en: ["A)-Eat undercooked meat", "B)- Wash hands before handling raw meat", "C)-Wash your hands thoroughly after touching soil that may be contaminated with animal feces", "D)-Keep children's play areas from cat and dog feces"] }, answer: { en: ["C)-Wash your hands thoroughly after touching soil that may be contaminated with animal feces"] } },
+            { number: 38, type: "mcq", question: { en: "Question 30:. Causes of candida parapsilosis include:" }, options: { en: ["A)- Patients with neutropenia", "B)- Endocarditis", "C)- Meningitis", "D)- Others"] }, answer: { en: ["D)- Others"] } },
+            { number: 39, type: "mcq", question: { en: "Question 31:Candida tropicalis has been implicated in infections of:" }, options: { en: ["A)- Patients with neutropenia", "B)- Endocarditis", "C)- Meningitis", "D)- Others"] }, answer: { en: ["D)- Others"] } },
+            { number: 40, type: "mcq", question: { en: "Question 32: Portals of entry for Candida include:" }, options: { en: ["A)- Gastro intestinal tract", "B)- Air borne route", "C)- Sex", "D)- Urinary tract"] }, answer: { en: ["A)- Gastro intestinal tract"] } },
+            { number: 41, type: "mcq", question: { en: "Question 33:Causes of oral candidiasis include:" }, options: { en: ["A)-Chemotherapy for cancer", "B)-Wear rubber gloves", "C)-Hands that are exposed to moisture", "D)-Birth control pills"] }, answer: { en: ["A)-Chemotherapy for cancer"] } },
+            { number: 42, type: "mcq", question: { en: "Question 34: Causes of Cutaneous candidiasis include:" }, options: { en: ["A)- Chemotherapy for cancer", "B)-Hands that are exposed to moisture", "C)- Ventilation tubing,", "D)- Surgical wounds."] }, answer: { en: ["B)-Hands that are exposed to moisture"] } },
+            { number: 43, type: "mcq", question: { en: "Question 35: Reservoir of Candida in human include:" }, options: { en: ["A)- Vagina", "B)- Pharynx", "C)- Gastrointestinal tract", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 44, type: "mcq", question: { en: "Question 36: Risk factors of candida include:" }, options: { en: ["A)- Immuno compromise", "B)-Gastrointestinal (GI) tract surgery", "C)- Hypertention", "D)-A+B"] }, answer: { en: ["D)-A+B"] } },
+            { number: 45, type: "mcq", question: { en: "Question 37: Symptom of trust candidiasis include:" }, options: { en: ["A)- Swallowing difficult", "B)- Chest pain", "C)- Weepy skin", "D)- White patches inside the mouth"] }, answer: { en: ["D)- White patches inside the mouth"] } },
+            { number: 46, type: "mcq", question: { en: "Question 38: Symptom of Esophagitis candidiasis include:" }, options: { en: ["A)- Small pustules nearby", "B)- Swallowing difficult", "C)- Chest pain", "D)-B+C"] }, answer: { en: ["D)-B+C"] } },
+            { number: 47, type: "mcq", question: { en: "Question 39: Symptom of cutaneous candidiasis include:" }, options: { en: ["A)- Patches of red", "B)- Moist", "C)- Weepy skin", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 48, type: "mcq", question: { en: "Question 40: Symptom of Vaginal yeast infections include:" }, options: { en: ["A)- Pain or discomfort during sexual intercourse", "B)- Weepy skin", "C)- Patches of red", "D)- A+B+C"] }, answer: { en: ["A)- Pain or discomfort during sexual intercourse"] } },
+            { number: 49, type: "mcq", question: { en: "Question 41: Candidiasis is diagnosed by:" }, options: { en: ["A)- Microscopic examination can identify the characteristic form of yeast:", "B)- Tissue biopsy", "C)-Blood cultures", "D)-A+B+C"] }, answer: { en: ["D)-A+B+C"] } },
+            { number: 50, type: "mcq", question: { en: "Question 42: Prognosis of vaginal candidiasis are:" }, options: { en: ["A)- Candida develops resistance to one drug", "B)- Cured reliably", "C)- These infections can recur", "D)- B+C"] }, answer: { en: ["D)- B+C"] } },
+            { number: 51, type: "mcq", question: { en: "Question 43: What is the site of infection when candidia spreads to the bloodstream ,it may cause a wide range of symptoms, from unexplained fever to shock and multiple organ failure is:" }, options: { en: ["A)- Esophagitis", "B)- Thrush", "C)- Cutaneous candidiasis", "D)- Deep candidiasis"] }, answer: { en: ["D)- Deep candidiasis"] } },
+            { number: 52, type: "mcq", question: { en: "Question 44: Prevention of candidiasis include:" }, options: { en: ["A)- Good hygiene, proper nutrition, and careful antibiotic use", "B)- Patients should be sure that catheters are improperly maintained and used for the longest possible time length.", "C)- Good vaginal hygiene and good oral hygiene might reduce problems, but they are guarantees against candidiasis.", "D)- A+B+C"] }, answer: { en: ["A)- Good hygiene, proper nutrition, and careful antibiotic use"] } }
+        ];
+
+        let quizDataPart8 = [
+            { number: 1, type: "mcq", question: { en: "Question 45: Dermatophytosis (also known as ringworm or tinea) is an infection of the hair, skin, or nails caused by a dermatophyte, which is most commonly of the:" }, options: { en: ["A)- Epidermophyton genera", "B)- Trichophyton genus", "C)- Microsporum", "D)- Others"] }, answer: { en: ["B)- Trichophyton genus"] } },
+            { number: 2, type: "mcq", question: { en: "Question 46: Dermatophytes is a group of fungi that invade and grow in:" }, options: { en: ["A)- Dead keratin", "B)- Cell", "C)- Liver", "D)- Lung"] }, answer: { en: ["A)- Dead keratin"] } },
+            { number: 3, type: "mcq", question: { en: "Question 47: According to their normal habitat dermatophytes are classified as anthropophilic for:" }, options: { en: ["A)-Human", "B)- Animal", "C)- Soil", "D)- Others"] }, answer: { en: ["A)-Human"] } },
+            { number: 4, type: "mcq", question: { en: "Question 48: According to their normal habitat dermatophytes are classified as zoophilic for:" }, options: { en: ["A)- Human", "B)- Soil", "C)- Animal", "D)- Others"] }, answer: { en: ["C)- Animal"] } },
+            { number: 5, type: "mcq", question: { en: "Question 49: According to their normal habitat dermatophytes are classified as geophilic for:" }, options: { en: ["A)- Animal", "B)-Human", "C)- Soil", "D)- Others"] }, answer: { en: ["C)- Soil"] } },
+            { number: 6, type: "mcq", question: { en: "Question 50: Anthropophilic dermatophytes are restricted to human hosts and produce a:" }, options: { en: ["A)- Mild and simple inflammation", "B)- Mild and acute inflammation", "C)- Mild and chronic inflammation", "D)- Others"] }, answer: { en: ["C)- Mild and chronic inflammation"] } },
+            { number: 7, type: "mcq", question: { en: "Question 51: Transmission of dermatophytosis include:" }, options: { en: ["A)- Directly", "B)- Indirectly", "C)- A+B", "D)- Others"] }, answer: { en: ["C)- A+B"] } },
+            { number: 8, type: "mcq", question: { en: "Question 52: Clinical classification of dermatophytosis is according to site:" }, options: { en: ["A)- Scalp - Tinea pedis", "B)- Feet - Tinea capitis..", "C)- Hands - Tinea manuum.", "D)- Others"] }, answer: { en: ["C)- Hands - Tinea manuum."] } },
+            { number: 9, type: "mcq", question: { en: "Question 53: Tinea pedis particularly affects the:" }, options: { en: ["A)- Hairs", "B)- Foot", "C)- Nail", "D)- Skin"] }, answer: { en: ["B)- Foot"] } },
+            { number: 10, type: "mcq", question: { en: "Question 54: Tinea capitis particularly affects the:" }, options: { en: ["A)- Hairs", "B)- Foot", "C)- Nail", "D)- Skin"] }, answer: { en: ["A)- Hairs"] } },
+            { number: 11, type: "mcq", question: { en: "Question 55: Tinea unguium particularly affects the:" }, options: { en: ["A)- Hairs", "B)- Foot", "C)- Nail", "D)- Skin"] }, answer: { en: ["C)- Nail"] } },
+            { number: 12, type: "mcq", question: { en: "Question 56: Tinea corporis particularly affects the:" }, options: { en: ["A)- Hairs", "B)- Foot", "C)- Nail", "D)- Skin"] }, answer: { en: ["D)- Skin"] } },
+            { number: 13, type: "mcq", question: { en: "Question 57: The clinical manifestations of tinea pedis:" }, options: { en: ["A)- It commonly affects the plantar surface of the foot. Erythema, vesicles and pustules can occur", "B)- It particularly affects the web of the toe where skin may be macerated and erythematous", "C)- It can cause hair loss with broken hairs at the surface (as distinct from alopecia areata)", "D)-A+B"] }, answer: { en: ["D)-A+B"] } },
+            { number: 14, type: "mcq", question: { en: "Question 58: The clinical manifestations of tinea tinea unguium (onychomycosis):" }, options: { en: ["A)- It can cause hair loss with broken hairs at the surface (as distinct from alopecia areata)", "B)- Skin lesions have annular scaly plaques with raised edges", "C)- Typically lesions are on exposed skin of the trunk, arms and legs", "D)- Nail dystrophy with thickening and discoloration of the nail develops."] }, answer: { en: ["D)- Nail dystrophy with thickening and discoloration of the nail develops."] } },
+            { number: 15, type: "mcq", question: { en: "Question 59: The clinical manifestations of tinea tinea capitis is:" }, options: { en: ["A)- Skin lesions have annular scaly plaques with raised edges", "B)- It can cause hair loss with broken hairs at the surface (as distinct from alopecia areata)", "C)- Nail dystrophy with thickening and discoloration of the nail develops.", "D)- Typically lesions are on exposed skin of the trunk, arms and legs"] }, answer: { en: ["B)- It can cause hair loss with broken hairs at the surface (as distinct from alopecia areata)"] } },
+            { number: 16, type: "mcq", question: { en: "Question 60:The clinical manifestations of tinea tinea corporis is:" }, options: { en: ["A)- Skin lesions have annular scaly plaques with raised edges", "B)- There may be vesicles and pustules", "C)- Typically lesions are on exposed skin of the trunk, arms and legs", "D)-A+B+C"] }, answer: { en: ["D)-A+B+C"] } },
+            { number: 17, type: "mcq", question: { en: "Question 61: The clinical manifestation of tinea barbae is:" }, options: { en: ["A)- Typically lesions are on exposed skin of the trunk, arms and legs", "B)- Skin lesions have annular scaly plaques with raised edges", "C)- Affects the beard area (Redness, scaling and pustules are common)", "D)- It can cause hair loss with broken hairs at the surface (as distinct from alopecia areata)"] }, answer: { en: ["C)- Affects the beard area (Redness, scaling and pustules are common)"] } },
+            { number: 18, type: "mcq", question: { en: "Question 62: Symptom of dermatophytosis include:" }, options: { en: ["A) - Weight loss", "B) - Circular area of hair loss (alopecia)", "C) - Diarrhea", "D) - A+B+C"] }, answer: { en: ["B) - Circular area of hair loss (alopecia)"] } },
+            { number: 19, type: "mcq", question: { en: "Question 63:Dermatophytosis is diagnosed by:" }, options: { en: ["A) - Culture of the affected area", "B) - Wood's light examination", "C) - Microscopic examination of the stool.", "D) - A+B"] }, answer: { en: ["D) - A+B"] } },
+            { number: 20, type: "mcq", question: { en: "Question 64: The main complication of dermatophytosis is:" }, options: { en: ["A) - Pain and difficulty with shoes", "B) - Respiratory failure", "C) - Pneumothorax", "D)- Lead to other serious infections eg. cellulites"] }, answer: { en: ["D)- Lead to other serious infections eg. cellulites"] } },
+            { number: 21, type: "mcq", question: { en: "Question 65: Prevention of dermatophytosis include:" }, options: { en: ["A) - Avoid public swimming pools", "B) - keep your nails clean and trimmed", "C) - Keep your feet dry", "D)- Avoiding prolonged wetting or dampness of the skin and feet"] }, answer: { en: ["D)- Avoiding prolonged wetting or dampness of the skin and feet"] } },
+            { number: 22, type: "mcq", question: { en: "Question 66: Histoplasmosis is an infection caused by a fungus called:" }, options: { en: ["A)- Leishmania", "B)- Toxoplasma gondii", "C)- Dermatophyte", "D)- Others"] }, answer: { en: ["D)- Others"] } },
+            { number: 23, type: "mcq", question: { en: "Question 67: The fungus of histoplasmosis lives in:" }, options: { en: ["A) - Water", "B) - Soil", "C) - Animal", "D) – Human"] }, answer: { en: ["B) - Soil"] } },
+            { number: 24, type: "mcq", question: { en: "Question 68: Transmission of histoplasmosis:" }, options: { en: ["A) -Transmission from person to person", "B) - Inhalation of spores from soil (often soil contaminated with bat or bird droppings)", "C) - Directly (through contact with infected lesions).", "D) -Warm weather and tight clothing"] }, answer: { en: ["B) - Inhalation of spores from soil (often soil contaminated with bat or bird droppings)"] } },
+            { number: 25, type: "mcq", question: { en: "Question 69: Incubation period of histoplasmosis, after a person breathes in the fungal spores:" }, options: { en: ["A)- Between 1 and 7 days", "B)- Between 3 and 17 days", "C)- Between 3 and 10 days", "D)- Between 5 and 15 days"] }, answer: { en: ["B)- Between 3 and 17 days"] } },
+            { number: 26, type: "mcq", question: { en: "Question 70: Risk factors of histoplasmosis:" }, options: { en: ["A)- Construction workers", "B)- Landscapers and gardeners", "C)- Roofers", "D)-A+B+C"] }, answer: { en: ["D)-A+B+C"] } },
+            { number: 27, type: "mcq", question: { en: "Question 71: Most at risk of severe infection for histoplasmosis:" }, options: { en: ["A)- Corticosteroid drugs, such as prednisone", "B)- Intensive cancer chemotherapy", "C)- Landscapers and gardeners", "D)- A+B"] }, answer: { en: ["D)- A+B"] } },
+            { number: 28, type: "mcq", question: { en: "Question 72: Symptoms of histoplasmosis include: " }, options: { en: ["A)- Headache", "B)- Diarrhea", "C)- Vomiting", "D)- Weight loss"] }, answer: { en: ["A)- Headache"] } },
+            { number: 29, type: "mcq", question: { en: "Question 73: Histoplasmosis is diagnosed by:" }, options: { en: ["A) - Biopsy of the lung, skin, liver, or bone marrow", "B) - Culture of the lung, skin, liver, or bone marrow", "C) - Cultures of the blood, urine, or sputum", "D) - A+C"] }, answer: { en: ["D) - A+C"] } },
+            { number: 30, type: "mcq", question: { en: "Question 74: Complications of Histoplasmosis:" }, options: { en: ["A)- Acute respiratory distress syndrome (ARDS)", "B)- Lung problems", "C)- Encephalitis", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 31, type: "mcq", question: { en: "Question 75: Prognosis of histoplasmosis depends on:" }, options: { en: ["A)- General health condition", "B)- Weakened immune system", "C)- Some people get better without treatment", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 32, type: "mcq", question: { en: "Question 76: Prevention of histoplasmosis:" }, options: { en: ["A)- Wearing clean, loose-fitting underwear", "B)- Wash hands after handling raw meat", "C)- Wearing protective clothing", "D)- Others"] }, answer: { en: ["C)- Wearing protective clothing"] } },
+            { number: 33, type: "mcq", question: { en: "Question 77: Aspergillosis is infection, usually of the lungs, caused by the:" }, options: { en: ["A) - Leishmania", "B) - Histoplasma", "C) - Plasodium", "D)- Others"] }, answer: { en: ["D)- Others"] } },
+            { number: 34, type: "mcq", question: { en: "Question 78: Allergic pulmonary aspergillosis is an allergic reaction to the fungus. This infection usually develops in people who have:" }, options: { en: ["A) - Weakened immune system", "B) - Lung abscess", "C) - Lung problems such as asthma", "D) - Tuberculosis"] }, answer: { en: ["C) - Lung problems such as asthma"] } },
+            { number: 35, type: "mcq", question: { en: "Question 79: Aspergilloma is develops in an area of past lung disease or lung scarring such as:" }, options: { en: ["A) - Weakened immune system", "B) - Tuberculosis", "C) - Lung problems such as asthma", "D) - A+B+C"] }, answer: { en: ["B) - Tuberculosis"] } },
+            { number: 36, type: "mcq", question: { en: "Question 80: Invasive pulmonary aspergillosis is a serious infection occurs most often in people with:" }, options: { en: ["A) - Weakened immune system", "B) - Lung problems such as asthma", "C) - Tuberculosis", "D) - Lung abscess"] }, answer: { en: ["A) - Weakened immune system"] } },
+            { number: 37, type: "mcq", question: { en: "Question 81: Transmission of aspergillosis include:" }, options: { en: ["A)- Water", "B) - Swimming pools", "C) - Ingestion of conidia (spores)", "D) -Inhalation of conidia (spores)"] }, answer: { en: ["D) -Inhalation of conidia (spores)"] } },
+            { number: 38, type: "mcq", question: { en: "Question 82: Risk factors of aspergillosis include:" }, options: { en: ["A) - Tuberculosis", "B) - Meningitis", "C) - Healthy immune system", "D) – Malaria"] }, answer: { en: ["A) - Tuberculosis"] } },
+            { number: 39, type: "mcq", question: { en: "Question 83: Symptom of pulmonary aspergillosis may include:" }, options: { en: ["A)- Weight loss", "B)- Cough", "C)- Fever", "D)-A+B+C"] }, answer: { en: ["D)-A+B+C"] } },
+            { number: 40, type: "mcq", question: { en: "Question 84: Diagnosis Aspergillus infection based on:" }, options: { en: ["A)- Symptoms", "B)- Physical examinations", "C)- Lung function tests", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 41, type: "mcq", question: { en: "Question 85: Complications of aspergillosis include:" }, options: { en: ["A)- Massive bleeding from the lung", "B)- Permanent airway blockage", "C)- Heart problems", "D)- A+B"] }, answer: { en: ["D)- A+B"] } },
+            { number: 42, type: "mcq", question: { en: "Question 86: Prognosis of aspergillosis include:" }, options: { en: ["A)- Allergic aspergillosis usually does not get better over time", "B)- Invasive aspergillosis does not get better with drug treatment, it eventually leads to death.", "C)- Invasive aspergillosis not depends on immune system health", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 43, type: "mcq", question: { en: "Question 87: Prevention of aspergillosis include:" }, options: { en: ["A)- It's nearly possible to avoid exposure to aspergillus", "B)- To be expose to airborne infectious agents", "C)- If you have had a transplant or are undergoing chemotherapy, try to stay away from the most obvious sources of mold, such as construction sites, compost piles ect……", "D)- A+B+C"] }, answer: { en: ["D)- A+B+C"] } },
+            { number: 44, type: "mcq", question: { en: "Question 88: Cryptococcosis is an infectious disease that is caused by a fungus:" }, options: { en: ["A)- Cryptococcus neoformans", "B)- Cryptococcosis gattii", "C)- Trichophyton rubrum", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["D)- A+B"] } },
+            { number: 45, type: "mcq", question: { en: "Question 89: There are more than: 30 species of Cryptococcus," }, options: { en: ["A)- 10 species of Cryptococcus,", "B)- 20 species of Cryptococcus,", "C)- 25 species of Cryptococcus,", "D)- 35 species of Cryptococcus,", "E)- Others"] }, answer: { en: ["E)- Others"] } },
+            { number: 46, type: "mcq", question: { en: "Question 90: Risk factors the infection of Cryptococcosis:" }, options: { en: ["A)- Bird dropping", "B)- Haematological malignancies", "C)- Infant", "D)-A+B", "E)- A+B+C"] }, answer: { en: ["D)-A+B"] } },
+            { number: 47, type: "mcq", question: { en: "Question 91: Transmission of Cryptococcosis include:" }, options: { en: ["A) - Spread directly from person to person", "B) - Spread between animals and people", "C) - Spread between soil and people", "D) - Inhalation the fungus from the environment", "E) - Others"] }, answer: { en: ["D) - Inhalation the fungus from the environment"] } },
+            { number: 48, type: "mcq", question: { en: "Question 92: Symptoms of cryptococcosis in some people has lung infection:" }, options: { en: ["A)- Difficulty breathing", "B)- Cough", "C)- Confusion", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["D)- A+B"] } },
+            { number: 49, type: "mcq", question: { en: "Question 93: Symptoms of cryptococcosis in some people has meningitis infection:" }, options: { en: ["A)- Blurred vision", "B)- Headache", "C)- Confusion", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["E)- A+B+C"] } },
+            { number: 50, type: "mcq", question: { en: "Question 94: Symptoms of cryptococcosis in some people has skin infection:" }, options: { en: ["A)- Consisting of bumps", "B)- Confusion", "C)- Difficulty breathing", "D)- Headache", "E)- A+B+C+D"] }, answer: { en: ["A)- Consisting of bumps"] } },
+            { number: 51, type: "mcq", question: { en: "Question 95: The diagnosis of cryptococcosis is based on:" }, options: { en: ["A)- Examination of tissue and fluid samples", "B)- Urine and sputum: cultures", "C)-CT scan", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 52, type: "mcq", question: { en: "Question 96: Complications of cryptococcosis is based on:" }, options: { en: ["A)- Bronchitis", "B)- Permanent neurologic damage", "C)- Septicemia", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["D)- A+B"] } },
+            { number: 53, type: "mcq", question: { en: "Question 97: Prognosis of cryptococcosis: With early diagnosis and treatment, most people with cryptococcosis will have a:" }, options: { en: ["A)- Bad prognosis because the infection will be spreaded.", "B)- Good prognosis because the infection will be stopped.", "C)- Mortality rate as high as 30%.", "D)- A+B", "E)- B+C"] }, answer: { en: ["E)- B+C"] } },
+            { number: 54, type: "mcq", question: { en: "Question 98: Prevention of cryptococcosis:" }, options: { en: ["A)- Vaccination", "B)- Large accumulations of bird droppings should be conserved.", "C)- Not use antibiotics to prevent repeat infections.", "D)- Large accumulations of bird droppings should be removed after first being wetted.", "E)-A+B+C+D"] }, answer: { en: ["D)- Large accumulations of bird droppings should be removed after first being wetted."] } },
+            { number: 55, type: "mcq", question: { en: "Question 99: Onychomycosis is fungal infection of the:" }, options: { en: ["A)- Hand", "B)-Nail plate, nail bed", "C)- Lung", "D)- Liver", "E)- Others"] }, answer: { en: ["B)-Nail plate, nail bed"] } },
+            { number: 56, type: "mcq", question: { en: "Question 100: The responsible agents for nail infection is/are:" }, options: { en: ["A)- Fungi,", "B)- Yeasts, and molds", "C)- Molds", "D)-A+B", "E)-A+B+C"] }, answer: { en: ["E)-A+B+C"] } },
+            { number: 57, type: "mcq", question: { en: "Question 101: Onychomycosis is caused by:" }, options: { en: ["A)- 1 main classes of fungi", "B)- 2 main classes of fungi", "C)- 4 main classes of fungi", "D)- 5 main classes of fungi", "E)- Others"] }, answer: { en: ["E)- Others"] } },
+            { number: 58, type: "mcq", question: { en: "Question 102: The most common cause of onychomycosis is/are:" }, options: { en: ["A)- Dermatophytes", "B)- Candida albican", "C)- Toxoplasma gondii", "D)- Epidermophyton genera", "E)- Others"] }, answer: { en: ["A)- Dermatophytes"] } },
+            { number: 59, type: "mcq", question: { en: "Question 103: Risk factors for onychomycosis (toenail fungus) is/are:" }, options: { en: ["A)- Prior trauma", "B)- Participation in fitness activities", "C)- Warm climate", "D)- B+C", "E)- A+B+C"] }, answer: { en: ["E)- A+B+C"] } },
+            { number: 60, type: "mcq", question: { en: "Question 104: Diagnosis of onychomycosis based on:" }, options: { en: ["A)- Physical examination", "B)- Patients’ history", "C)- Microscopy and culture of nail specimens", "D)- Biopsy", "E)- A+B+C"] }, answer: { en: ["E)- A+B+C"] } },
+            { number: 61, type: "mcq", question: { en: "Question 105: Differential diagnosis of onychomycosis include:" }, options: { en: ["A)- Psoriasis.", "B)- Normal aging.", "C)- Yellow nail syndrome", "D)- Chronic paronychia.", "E)-A+B+C+D"] }, answer: { en: ["E)-A+B+C+D"] } },
+            { number: 62, type: "mcq", question: { en: "Question 106: Complications of onychomycosis is/are:" }, options: { en: ["A)- Lead to other serious infections eg. cellulites", "B)- A severe case of nail fungus can be painful and may cause permanent damage to your nails.", "C)- Distorted in shape", "D)- A+B", "E)- A+B+C"] }, answer: { en: ["E)- A+B+C"] } },
+            { number: 63, type: "mcq", question: { en: "Question 107: Prevention of onychomycosis based on:" }, options: { en: ["A)- Keep your feet wet.", "B)- Use public swimming pools", "C)- Share personal belongings such as socks, slippers, or shoes especially with people known to have onychomycosis", "D)- keep your nails clean and trimmed", "E)- Others"] }, answer: { en: ["D)- keep your nails clean and trimmed"] } },
+            { number: 64, type: "mcq", question: { en: "Multiple Choice Questions for Parasitology (by Dr. PEN Sunna) 1. What is the common name of Loa loa?" }, options: { en: ["A. River blindness worm", "B. Eye worm", "C. Guinea worm", "D. Onchocerca worm"] }, answer: { en: ["B. Eye worm"] } },
+            { number: 65, type: "mcq", question: { en: "2. What kind of nematode worm that cause only in subcutaneous filariasis in humans?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["A. Loa Loa"] } },
+            { number: 66, type: "mcq", question: { en: "3. What is the name of worm that its young larvae developed in the horseflies?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["A. Loa Loa"] } },
+            { number: 67, type: "mcq", question: { en: "4. Adult worm that produced microfilariae measuring 250 to 300 μm by 6 to 8 μm is:" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["A. Loa Loa"] } },
+            { number: 68, type: "mcq", question: { en: "5. What kind of nematode that caused Calabar swellings?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["A. Loa Loa"] } },
+            { number: 69, type: "mcq", question: { en: "6. What kind of nematode that caused swelling of the eye?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["A. Loa Loa"] } },
+            { number: 70, type: "mcq", question: { en: "7. What is the common medicine to treat loaisis?" }, options: { en: ["A. Ivermectin", "B. Metronidazole", "C. Doxycycline", "D. Albendazole"] }, answer: { en: ["D. Albendazole"] } },
+            { number: 71, type: "mcq", question: { en: "8. What kind of worm that caused River blindness?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["B. Onchocerca volvulus"] } },
+            { number: 72, type: "mcq", question: { en: "9. What is the definitive host for Onchocerca volvulus?" }, options: { en: ["A. Black fly", "B. Horsefly", "C. Human", "D. Copepod"] }, answer: { en: ["C. Human"] } },
+            { number: 73, type: "mcq", question: { en: "10. Adult males range in length from 19-42 cm and range in width from 130-210 micrometers is:" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["B. Onchocerca volvulus"] } },
+            { number: 74, type: "mcq", question: { en: "11. Adult worms can live in the nodules for approximately 15 years is:" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["B. Onchocerca volvulus"] } },
+            { number: 75, type: "mcq", question: { en: "12. What kind of nematode that caused Lizard skin disease?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["B. Onchocerca volvulus"] } },
+            { number: 76, type: "mcq", question: { en: "13. What kind of worm that caused Swollen lymph nodes or/and blindness?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["B. Onchocerca volvulus"] } },
+            { number: 77, type: "mcq", question: { en: "14. What medicines that can treat onchocerciasis?" }, options: { en: ["A. Ivermectin + Doxycycline", "B. Metronidazole", "C. Doxycycline + Albendazole", "D. Albendazole"] }, answer: { en: ["A. Ivermectin + Doxycycline"] } },
+            { number: 78, type: "mcq", question: { en: "15. What kind of nematode worm that caused elephantiasis?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["C. Wuchereria bancrofti"] } },
+            { number: 79, type: "mcq", question: { en: "16. What kind of worm that adult male and female are most often coiled together and are difficult to separate?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["C. Wuchereria bancrofti"] } },
+            { number: 80, type: "mcq", question: { en: "17. The vector of Wuchereria bancrofti filariasis are:" }, options: { en: ["A. Culex; Anopheles; Aedes; Mansonia", "B. Culex; Anopheles; horsefly; Mansonia", "C. Black fly; Anopheles; Aedes; Mansonia", "D. Horse fly; Culex; Anopheles; black fly"] }, answer: { en: ["A. Culex; Anopheles; Aedes; Mansonia"] } },
+            { number: 81, type: "mcq", question: { en: "18. Adult worms produce microfilariae measuring 244 to 296 μm by 7.5 to 10 μm is:" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["C. Wuchereria bancrofti"] } },
+            { number: 82, type: "mcq", question: { en: "19. The location of Elephantiasis affects to men mainly in:" }, options: { en: ["A. Legs, arms, and scrotum", "B. Legs, arms and breasts", "C. Breasts, face and legs", "D. Legs, arms and eyes"] }, answer: { en: ["A. Legs, arms, and scrotum"] } },
+            { number: 83, type: "mcq", question: { en: "20. Method of diagnosis of microfilariae of Wuchereria bancrofti can be implemented by:" }, options: { en: ["A. A blood smear, a polymerase chain reaction test, Ultrasonography", "B. Ultrasonography", "C. A blood smear and stool", "D. A blood smear, stool, a polymerase chain reaction test and Ultrasonography"] }, answer: { en: ["A. A blood smear, a polymerase chain reaction test, Ultrasonography"] } },
+            { number: 84, type: "mcq", question: { en: "21. The therapeutic drugs for Wuchereria bancrofti microfilariae are:" }, options: { en: ["A. Diethylcarbamazine (DEC), ivermectin, or albendazole", "B. Diethylcarbamazine (DEC), doxycycline, or albendazole", "C. Diethylcarbamazine (DEC), erythromycin, or albendazole", "D. Diethylcarbamazine (DEC), erythromycin, or metronidazole"] }, answer: { en: ["A. Diethylcarbamazine (DEC), ivermectin, or albendazole"] } },
+            { number: 85, type: "mcq", question: { en: "22. What kind of worm that caused Guinea worm disease?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["D. Dracunculus medinensis"] } },
+            { number: 86, type: "mcq", question: { en: "23. Adult female worms can reach a maximum length of up to 800 mm long is:" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["D. Dracunculus medinensis"] } },
+            { number: 87, type: "mcq", question: { en: "24. What kind of Adult female worms that formed a blister in the skin?" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["D. Dracunculus medinensis"] } },
+            { number: 88, type: "mcq", question: { en: "25. The vector of Dracunculus medinensis is:" }, options: { en: ["A. Copepods", "B. Anopheles", "C. Black fly", "D. Horse fly"] }, answer: { en: ["A. Copepods"] } },
+            { number: 89, type: "mcq", question: { en: "26. The methods of diagnosis on seeing the worms emerging from the lesions and microscopic examinations of the larvae is used for diagnosis:" }, options: { en: ["A. Loa Loa", "B. Onchocerca volvulus", "C. Wuchereria bancrofti", "D. Dracunculus medinensis"] }, answer: { en: ["D. Dracunculus medinensis"] } },
+            { number: 90, type: "mcq", question: { en: "27. What is the common name of disease that caused by Dracunculus medinensis?" }, options: { en: ["A. River blindness disease", "B. Eye worm disease", "C. Guinea worm disease", "D. Onchocerciasis"] }, answer: { en: ["C. Guinea worm disease"] } },
+            { number: 91, type: "mcq", question: { en: "28. Dracunculus medinensis larvae are found in:" }, options: { en: ["A. Freshwater", "B. Salt water", "C. Freshwater and salt water", "D. Pollution water"] }, answer: { en: ["A. Freshwater"] } },
+            { number: 92, type: "mcq", question: { en: "29. Why only Dracunculus medinensis female worms induce a blister on the skin?" }, options: { en: ["A. Male could not compete with female", "B. Male smaller than female", "C. Male could not produce larvae", "D. After copulation, the male worms die and the females migrate in the skin surface"] }, answer: { en: ["D. After copulation, the male worms die and the females migrate in the skin surface"] } },
+            { number: 93, type: "mcq", question: { en: "30. The eradication program of World Health Organization (WHO) and the Disease Control and Prevention (CDC) eliminated Dracunculus medinensis worms 99.99% in year:" }, options: { en: ["A. 1984", "B. 1995", "C. 2014", "D. 2015"] }, answer: { en: ["D. 2015"] } }
+        ];
+
+        let quizData;
+        let currentPart = 1;
+        let quizState = {};
+
+        // Sound Synthesis
+        const correctSynth = new Tone.Synth().toDestination();
+        const incorrectSynth = new Tone.Synth().toDestination();
+        let audioStarted = false;
+
+        // DOM Elements
+        const partButtons = [
+            document.getElementById('part1-btn'),
+            document.getElementById('part2-btn'),
+            document.getElementById('part3-btn'),
+            document.getElementById('part4-btn'),
+            document.getElementById('part5-btn'),
+            document.getElementById('part6-btn'),
+            document.getElementById('part7-btn'),
+            document.getElementById('part8-btn')
+        ];
+        
+        const quizView = document.getElementById('quiz-view');
+        const editView = document.getElementById('edit-view');
+        const practiceSheetBtn = document.getElementById('practice-sheet-btn');
+        const practiceSheetView = document.getElementById('practice-sheet-view');
+        const showAllBtn = document.getElementById('show-all-btn');
+        const allQuestionsView = document.getElementById('all-questions-view');
+        const editQuizBtn = document.getElementById('edit-quiz-btn');
+        const applyPreviewBtn = document.getElementById('apply-preview-btn');
+        const generateSaveCodeBtn = document.getElementById('generate-save-code-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const addQuestionBtn = document.getElementById('add-question-btn');
+        const editQuestionsContainer = document.getElementById('edit-questions-container');
+        const editQuestionNavArea = document.getElementById('edit-question-navigation');
+        const exportArea = document.getElementById('export-area');
+        const exportOutput = document.getElementById('export-output');
+        const copyFeedbackEl = document.getElementById('copy-feedback');
+
+        const mainScoreTextEl = document.getElementById('main-score-text');
+        const questionNavArea = document.getElementById('question-navigation');
+        const questionArea = document.getElementById('question-area');
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const answerArea = document.getElementById('answer-area');
+        const feedbackArea = document.getElementById('feedback-area');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        const redoPartBtn = document.getElementById('redo-part-btn');
+        const resultsArea = document.getElementById('results-area');
+        const resultsScoreEl = document.getElementById('results-score');
+        const summaryEl = document.getElementById('summary');
+        const restartBtn = document.getElementById('restart-btn');
+
+        let isAnswered = false;
+
+        async function startAudio() {
+            if (!audioStarted) {
+                await Tone.start();
+                audioStarted = true;
+            }
+        }
+        
+        function switchPart(part) {
+            currentPart = part;
+
+            partButtons.forEach((btn, idx) => {
+                if (idx === part - 1) {
+                    btn.classList.add('bg-indigo-600', 'text-white');
+                    btn.classList.remove('bg-white', 'text-gray-900');
+                } else {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('bg-white', 'text-gray-900');
+                }
+            });
+            
+            const datasets = [quizDataPart1, quizDataPart2, quizDataPart3, quizDataPart4, quizDataPart5, quizDataPart6, quizDataPart7, quizDataPart8];
+            quizData = datasets[part-1];
+            
+            document.getElementById('quiz-subtitle').textContent = `Subject: Microbiology/Parasitology (${quizData.length} questions)`;
+            loadQuizView();
+        }
+
+        function updateScoreText() {
+            mainScoreTextEl.innerHTML = `Score: ${quizState[currentPart].score} / ${quizData.length}`;
+        }
+
+        function initializeQuiz() {
+            quizState = {};
+            for(let i=1; i<=8; i++) {
+                quizState[i] = { userAnswers: [], score: 0, currentQuestionIndex: 0 };
+            }
+            switchPart(currentPart); 
+        }
+        
+        function loadQuizView() {
+            quizView.classList.remove('hidden');
+            editView.classList.add('hidden');
+            practiceSheetView.classList.add('hidden');
+            allQuestionsView.classList.add('hidden');
+            
+            questionNavArea.classList.remove('hidden');
+            questionArea.classList.remove('hidden');
+            answerArea.classList.remove('hidden');
+            resultsArea.classList.add('hidden');
+
+            renderQuestionButtons();
+            showQuestion();
+            updateScoreText();
+        }
+
+        function renderQuestionButtons() {
+            questionNavArea.innerHTML = '';
+            quizData.forEach((question, index) => {
+                const button = document.createElement('button');
+                button.textContent = index + 1;
+                button.classList.add('question-nav-btn', 'border-2', 'border-gray-300', 'rounded-md');
+                button.addEventListener('click', () => {
+                    quizState[currentPart].currentQuestionIndex = index;
+                    showQuestion();
+                });
+                questionNavArea.appendChild(button);
+            });
+        }
+        
+        function updateQuestionButtonStyles() {
+            const buttons = Array.from(questionNavArea.children);
+            buttons.forEach((button, index) => {
+                button.classList.remove('active', 'answered-correct', 'answered-incorrect');
+                if (quizState[currentPart].userAnswers[index]) {
+                    if(quizState[currentPart].userAnswers[index].isCorrect) {
+                        button.classList.add('answered-correct');
+                    } else {
+                        button.classList.add('answered-incorrect');
+                    }
+                }
+            });
+            const currentQuestionIndex = quizState[currentPart].currentQuestionIndex;
+            if(buttons[currentQuestionIndex]) {
+                buttons[currentQuestionIndex].classList.add('active');
+            }
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestionIndex = quizState[currentPart].currentQuestionIndex;
+            const userAnswers = quizState[currentPart].userAnswers;
+            const currentQuestion = quizData[currentQuestionIndex];
+            isAnswered = userAnswers[currentQuestionIndex] !== undefined;
+
+            if (isAnswered) redoBtn.classList.remove('hidden');
+
+            questionNumberEl.innerHTML = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            questionTextEl.innerHTML = currentQuestion.question.en;
+            
+            answerArea.className = 'flex flex-col gap-4';
+            const optionsGrid = document.createElement('div');
+            optionsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full';
+            
+            const correctAnswers = Array.isArray(currentQuestion.answer.en) ? currentQuestion.answer.en.map(a=>a.trim()) : [currentQuestion.answer.en.trim()];
+            
+            currentQuestion.options.en.forEach((optionEn) => {
+                const button = document.createElement('button');
+                button.innerHTML = `<span>${optionEn}</span>`;
+                button.classList.add('option-btn', 'w-full', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'text-left', 'hover:bg-gray-100');
+                
+                button.addEventListener('click', () => {
+                    if (isAnswered) return;
+                    button.classList.toggle('selected');
+                    const selectedButtons = Array.from(optionsGrid.querySelectorAll('button.selected'));
+                    if (selectedButtons.length === correctAnswers.length) {
+                        checkMcqAnswer(currentQuestionIndex, optionsGrid, feedbackArea);
+                    }
+                });
+
+                if(isAnswered) {
+                    button.disabled = true;
+                    const userAnswerData = userAnswers[currentQuestionIndex];
+                    const isThisCorrectOption = correctAnswers.includes(optionEn.trim());
+                    const wasSelected = userAnswerData.answers && userAnswerData.answers.includes(optionEn.trim());
+                    if (isThisCorrectOption) button.classList.add('correct');
+                    else if (wasSelected) button.classList.add('incorrect');
+                }
+                optionsGrid.appendChild(button);
+            });
+            answerArea.appendChild(optionsGrid);
+            updateQuestionButtonStyles();
+            updateButtonVisibility();
+        }
+        
+        function resetState() {
+            feedbackArea.textContent = '';
+            answerArea.innerHTML = '';
+            redoBtn.classList.add('hidden');
+        }
+
+        function updateButtonVisibility() {
+            const currentQuestionIndex = quizState[currentPart].currentQuestionIndex;
+            prevBtn.classList.toggle('hidden', currentQuestionIndex === 0);
+            const allAnswered = quizState[currentPart].userAnswers.filter(Boolean).length === quizData.length;
+            nextBtn.classList.toggle('hidden', allAnswered);
+            if (currentQuestionIndex === quizData.length - 1 || allAnswered) {
+                 nextBtn.innerHTML = `<span class="font-semibold">Show Results</span>`;
+            } else {
+                 nextBtn.innerHTML = `<span class="font-semibold">Next Question</span>`;
+            }
+        }
+
+        async function checkMcqAnswer(questionIndex, optionsContainer, feedbackEl) {
+            await startAudio();
+            if (quizState[currentPart].userAnswers[questionIndex]) return;
+
+            const selectedButtons = Array.from(optionsContainer.querySelectorAll('button.selected'));
+            const selectedTexts = selectedButtons.map(btn => btn.querySelector('span').textContent.trim());
+            const currentQuestion = quizData[questionIndex];
+            const correctAnswers = Array.isArray(currentQuestion.answer.en) ? currentQuestion.answer.en.map(a => a.trim()) : [currentQuestion.answer.en.trim()];
+
+            const isCorrect = selectedTexts.length === correctAnswers.length && selectedTexts.every(val => correctAnswers.includes(val));
+
+            if (isCorrect) {
+                quizState[currentPart].score++;
+                correctSynth.triggerAttackRelease("C5", "8n", Tone.now());
+                if (feedbackEl) {
+                    feedbackEl.innerHTML = `Correct!`;
+                    feedbackEl.className = 'mt-2 text-center text-md font-medium text-green-600 practice-feedback';
+                }
+            } else {
+                const now = Tone.now();
+                incorrectSynth.triggerAttackRelease("G3", "16n", now);
+                incorrectSynth.triggerAttackRelease("F#3", "8n", now + 0.1);
+                if (feedbackEl) {
+                    feedbackEl.innerHTML = `Wrong! Correct answer: <strong>${correctAnswers.join(', ')}</strong>`;
+                    feedbackEl.className = 'mt-2 text-center text-sm font-medium text-red-600 practice-feedback';
+                }
+            }
+
+            const allButtons = optionsContainer.querySelectorAll('button.option-btn');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.remove('selected', 'hover:bg-gray-100');
+                const btnText = btn.querySelector('span').textContent.trim();
+                if (correctAnswers.includes(btnText)) btn.classList.add('correct');
+                else if (selectedTexts.includes(btnText)) btn.classList.add('incorrect');
+            });
+
+            quizState[currentPart].userAnswers[questionIndex] = { isCorrect, answers: selectedTexts };
+            if (!practiceSheetView.classList.contains('hidden')) {
+                document.getElementById(`ps-redo-btn-${questionIndex}`).classList.remove('hidden');
+            } else redoBtn.classList.remove('hidden');
+            
+            updateScoreText();
+            updateQuestionButtonStyles();
+            updateButtonVisibility();
+        }
+        
+        function renderPracticeSheet() {
+            practiceSheetView.innerHTML = ''; 
+            const title = document.createElement('h2');
+            title.className = 'text-3xl font-bold text-center mb-6 text-gray-800';
+            title.textContent = `Practice Sheet - Part ${currentPart}`;
+            practiceSheetView.appendChild(title);
+
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.id = `ps-question-${index}`;
+                questionDiv.className = 'mb-6 p-4 border rounded-lg bg-gray-50';
+                
+                const questionHeader = document.createElement('div');
+                questionHeader.className = 'flex justify-between items-start gap-4 mb-4';
+                
+                const questionTitle = document.createElement('p');
+                questionTitle.className = 'font-bold text-lg text-gray-900 flex-grow';
+                questionTitle.innerHTML = q.question.en;
+                
+                const prRedoBtn = document.createElement('button');
+                prRedoBtn.id = `ps-redo-btn-${index}`;
+                prRedoBtn.textContent = 'Redo';
+                prRedoBtn.className = 'hidden bg-yellow-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-yellow-600 text-sm shrink-0';
+                prRedoBtn.addEventListener('click', () => redoPracticeSheetQuestion(index));
+                
+                questionHeader.appendChild(questionTitle);
+                questionHeader.appendChild(prRedoBtn);
+                questionDiv.appendChild(questionHeader);
+
+                const answersContainer = document.createElement('div');
+                const feedbackEl = document.createElement('div');
+                feedbackEl.className = 'practice-feedback mt-2';
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3';
+                const correctAnswers = Array.isArray(q.answer.en) ? q.answer.en.map(a=>a.trim()) : [q.answer.en.trim()];
+
+                q.options.en.forEach(optionEn => {
+                    const button = document.createElement('button');
+                    button.innerHTML = `<span>${optionEn}</span>`;
+                    button.className = 'option-btn w-full p-3 border-2 border-gray-300 rounded-lg text-left hover:bg-gray-100 bg-white';
+                    button.addEventListener('click', () => {
+                        if (!quizState[currentPart].userAnswers[index]) {
+                            button.classList.toggle('selected');
+                            const selectedButtons = Array.from(optionsGrid.querySelectorAll('button.selected'));
+                            if (selectedButtons.length === correctAnswers.length) checkMcqAnswer(index, optionsGrid, feedbackEl);
+                        }
+                    });
+                    optionsGrid.appendChild(button);
+                });
+                
+                answersContainer.appendChild(optionsGrid);
+                questionDiv.appendChild(answersContainer);
+                questionDiv.appendChild(feedbackEl);
+                practiceSheetView.appendChild(questionDiv);
+
+                if (quizState[currentPart].userAnswers[index]) {
+                    prRedoBtn.classList.remove('hidden');
+                    const userAnswerData = quizState[currentPart].userAnswers[index];
+                    const buttons = optionsGrid.querySelectorAll('.option-btn');
+                    buttons.forEach(button => {
+                        button.disabled = true;
+                        button.classList.remove('selected', 'hover:bg-gray-100');
+                        const optionText = button.querySelector('span').textContent.trim();
+                        if (correctAnswers.includes(optionText)) button.classList.add('correct');
+                        else if (userAnswerData.answers && userAnswerData.answers.includes(optionText)) button.classList.add('incorrect');
+                    });
+                }
+            });
+            
+            const backBtn = document.createElement('button');
+            backBtn.className = 'mt-8 bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-lg block mx-auto';
+            backBtn.innerHTML = '<span class="font-semibold">Back to Quiz</span>';
+            backBtn.addEventListener('click', togglePracticeSheetView);
+            practiceSheetView.appendChild(backBtn);
+        }
+
+        function togglePracticeSheetView() {
+            const isHiding = !practiceSheetView.classList.contains('hidden');
+            if (isHiding) {
+                practiceSheetView.classList.add('hidden');
+                quizView.classList.remove('hidden');
+                practiceSheetBtn.textContent = 'Practice Sheet';
+                showQuestion();
+            } else {
+                quizView.classList.add('hidden');
+                practiceSheetView.classList.remove('hidden');
+                allQuestionsView.classList.add('hidden');
+                practiceSheetBtn.textContent = 'Back to Quiz';
+                renderPracticeSheet();
+            }
+        }
+
+        function redoPracticeSheetQuestion(questionIndex) {
+            const answerData = quizState[currentPart].userAnswers[questionIndex];
+            if (!answerData) return;
+            if (answerData.isCorrect) quizState[currentPart].score--;
+            quizState[currentPart].userAnswers[questionIndex] = undefined;
+            updateScoreText();
+            updateQuestionButtonStyles();
+            const container = document.getElementById(`ps-question-${questionIndex}`);
+            const buttons = container.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'incorrect', 'selected');
+                btn.classList.add('hover:bg-gray-100');
+            });
+            container.querySelector('.practice-feedback').innerHTML = '';
+            document.getElementById(`ps-redo-btn-${questionIndex}`).classList.add('hidden');
+        }
+
+        function toggleAllQuestionsView() {
+            const isHiding = !allQuestionsView.classList.contains('hidden');
+            if (isHiding) {
+                allQuestionsView.classList.add('hidden');
+                quizView.classList.remove('hidden');
+                showAllBtn.textContent = 'Show Answers';
+            } else {
+                quizView.classList.add('hidden');
+                practiceSheetView.classList.add('hidden');
+                allQuestionsView.classList.remove('hidden');
+                showAllBtn.textContent = 'Back to Quiz';
+                renderAllQuestions();
+            }
+        }
+
+        function renderAllQuestions() {
+            allQuestionsView.innerHTML = ''; 
+            const title = document.createElement('h2');
+            title.className = 'text-3xl font-bold text-center mb-6 text-gray-800';
+            title.textContent = `All Questions & Answers - Part ${currentPart}`;
+            allQuestionsView.appendChild(title);
+
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'mb-6 p-4 border rounded-lg bg-gray-50';
+                let contentHTML = `<p class="font-bold text-lg mb-2">${q.question.en}</p>`;
+                contentHTML += '<ul class="list-disc list-inside space-y-1">';
+                const correctAnswers = Array.isArray(q.answer.en) ? q.answer.en.map(a=>a.trim()) : [q.answer.en.trim()];
+                q.options.en.forEach(option => {
+                    const isCorrect = correctAnswers.includes(option.trim());
+                    contentHTML += `<li class="${isCorrect ? 'text-green-700 font-semibold' : 'text-gray-700'}">${option}${isCorrect ? ' &check;' : ''}</li>`;
+                });
+                contentHTML += '</ul>';
+                questionDiv.innerHTML = contentHTML;
+                allQuestionsView.appendChild(questionDiv);
+            });
+            
+            const backBtn = document.createElement('button');
+            backBtn.className = 'mt-8 bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-lg block mx-auto';
+            backBtn.innerHTML = 'Back to Quiz';
+            backBtn.addEventListener('click', toggleAllQuestionsView);
+            allQuestionsView.appendChild(backBtn);
+        }
+
+        function showResults() {
+            questionNavArea.classList.add('hidden');
+            questionArea.classList.add('hidden');
+            answerArea.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            prevBtn.classList.add('hidden');
+            redoBtn.classList.add('hidden');
+            resultsArea.classList.remove('hidden');
+            resultsScoreEl.innerHTML = `Your final score is ${quizState[currentPart].score} out of ${quizData.length}.`;
+            summaryEl.innerHTML = `<div class="text-center mb-4"><h3 class="text-xl font-bold text-gray-700">Review Your Answers:</h3></div>`; 
+            
+            quizState[currentPart].userAnswers.forEach((ua, index) => {
+                if (!ua) return;
+                const qData = quizData[index];
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('mb-4', 'p-3', 'rounded-md', ua.isCorrect ? 'bg-blue-100' : 'bg-red-100');
+                const correctAnswerText = Array.isArray(qData.answer.en) ? qData.answer.en.join(', ') : qData.answer.en;
+                resultDiv.innerHTML = `<p class="font-semibold">${qData.question.en}</p>
+                    <p class="text-sm mt-2 ${ua.isCorrect ? 'text-blue-700' : 'text-red-700'}">Your answer: ${ua.answers.join(', ')}</p>
+                    ${!ua.isCorrect ? `<p class="text-sm text-gray-600">Correct: ${correctAnswerText}</p>` : ''}`;
+                summaryEl.appendChild(resultDiv);
+            });
+        }
+
+        function redoQuestion() {
+            const currentQuestionIndex = quizState[currentPart].currentQuestionIndex;
+            const answerData = quizState[currentPart].userAnswers[currentQuestionIndex];
+            if (!answerData) return;
+            if (answerData.isCorrect) quizState[currentPart].score--;
+            quizState[currentPart].userAnswers[currentQuestionIndex] = undefined;
+            updateScoreText();
+            showQuestion();
+        }
+
+        function redoPart() {
+            quizState[currentPart] = { userAnswers: [], score: 0, currentQuestionIndex: 0 };
+            loadQuizView();
+        }
+
+        function toggleEditMode() {
+            quizView.classList.toggle('hidden');
+            editView.classList.toggle('hidden');
+            if (!editView.classList.contains('hidden')) renderEditView();
+        }
+
+        function renderEditView() {
+            editQuestionsContainer.innerHTML = '';
+            editQuestionNavArea.innerHTML = '';
+            quizData.forEach((q, index) => {
+                const navButton = document.createElement('button');
+                navButton.textContent = index + 1;
+                navButton.className = 'question-nav-btn border-2 border-gray-300 rounded-md';
+                navButton.addEventListener('click', () => document.getElementById(`edit-q-${index}`).scrollIntoView({ behavior: 'smooth' }));
+                editQuestionNavArea.appendChild(navButton);
+                
+                const qDiv = document.createElement('div');
+                qDiv.id = `edit-q-${index}`;
+                qDiv.className = 'border p-4 rounded-lg mb-4 bg-gray-50 scroll-mt-4';
+                qDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="font-bold">Question ${index + 1}</p>
+                        <button class="bg-red-500 text-white px-3 py-1 rounded" onclick="quizData.splice(${index}, 1); renderEditView();">Delete</button>
+                    </div>
+                    <textarea class="edit-input w-full p-2 border rounded" id="edit-text-${index}">${q.question.en}</textarea>
+                    <div class="mt-2 space-y-2">
+                        ${q.options.en.map((opt, oIdx) => `
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="check-${index}-${oIdx}" ${q.answer.en.includes(opt) ? 'checked' : ''}>
+                                <input type="text" class="w-full p-1 border rounded" id="opt-${index}-${oIdx}" value="${opt}">
+                            </div>
+                        `).join('')}
+                    </div>`;
+                editQuestionsContainer.appendChild(qDiv);
+            });
+        }
+
+        function applyToPreview() {
+            const newQuestions = [];
+            editQuestionsContainer.querySelectorAll('.border').forEach((div, idx) => {
+                const qText = div.querySelector('textarea').value;
+                const opts = [];
+                const ans = [];
+                for(let i=0; i<div.querySelectorAll('input[type="text"]').length; i++){
+                    const optVal = document.getElementById(`opt-${idx}-${i}`)?.value;
+                    if(optVal) {
+                        opts.push(optVal);
+                        if(document.getElementById(`check-${idx}-${i}`).checked) ans.push(optVal);
+                    }
+                }
+                newQuestions.push({ number: idx+1, type: 'mcq', question: {en: qText}, options: {en: opts}, answer: {en: ans}});
+            });
+            const datasets = [quizDataPart1, quizDataPart2, quizDataPart3, quizDataPart4, quizDataPart5, quizDataPart6, quizDataPart7, quizDataPart8];
+            datasets[currentPart-1] = newQuestions;
+            quizData = newQuestions;
+            toggleEditMode();
+            initializeQuiz();
+        }
+
+        function generateSaveCode() {
+            const varName = `quizDataPart${currentPart}`;
+            exportOutput.value = `let ${varName} = ${JSON.stringify(quizData, null, 4)};`;
+            exportArea.classList.remove('hidden');
+        }
+
+        // Event Listeners
+        partButtons.forEach((btn, idx) => btn.addEventListener('click', () => switchPart(idx + 1)));
+        practiceSheetBtn.addEventListener('click', togglePracticeSheetView);
+        showAllBtn.addEventListener('click', toggleAllQuestionsView);
+        prevBtn.addEventListener('click', () => {
+            if (quizState[currentPart].currentQuestionIndex > 0) {
+                quizState[currentPart].currentQuestionIndex--;
+                showQuestion();
+            }
+        });
+        nextBtn.addEventListener('click', () => {
+            const allAnswered = quizState[currentPart].userAnswers.filter(Boolean).length === quizData.length;
+            if (quizState[currentPart].currentQuestionIndex < quizData.length - 1 && !allAnswered) {
+                quizState[currentPart].currentQuestionIndex++;
+                showQuestion();
+            } else showResults();
+        });
+        restartBtn.addEventListener('click', initializeQuiz);
+        redoBtn.addEventListener('click', redoQuestion);
+        redoPartBtn.addEventListener('click', redoPart);
+        editQuizBtn.addEventListener('click', toggleEditMode);
+        applyPreviewBtn.addEventListener('click', applyToPreview);
+        generateSaveCodeBtn.addEventListener('click', generateSaveCode);
+        cancelEditBtn.addEventListener('click', toggleEditMode);
+        exportOutput.addEventListener('click', () => {
+            exportOutput.select();
+            document.execCommand('copy');
+            copyFeedbackEl.textContent = 'Code copied!';
+            setTimeout(() => { copyFeedbackEl.textContent = '' }, 2000);
+        });
+
+        initializeQuiz();
+    </script>
+</body>
+</html>
